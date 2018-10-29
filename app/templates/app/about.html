@@ -1,0 +1,33 @@
+{% extends 'app/base_layout.html' %}
+{% load static %}
+
+{% block content %}
+  <head>
+    <link rel="stylesheet" href="{% static 'app/about.css' %}">
+  </head>
+  <div class="row">
+    <div class="col s6">
+      <h3>What is Crowdfunding?</h3>
+      <p>It's the quickest, easiest way to gather a large amount of money through donations from supporters, which includes your family, relatives, friends, colleagues and potential well-wishers.</p>
+    </div>
+    <div class="col s4 offset-s2">
+      <img src="{% static 'app/crowdfunding.png' %}" class="square">
+    </div>
+  </div>
+
+  <h3 class="causes">Causes you can raise funds for</h3>
+  <div class="row">
+    <div class="col l2 s3">
+      <img src="{% static 'app/children.jpg' %}" class="square responsive-img">
+    </div>
+    <div class="col l2 s3">
+      <img src="{% static 'app/creative.jpg' %}" class="square responsive-img">
+    </div>
+    <div class="col l2 s3">
+      <img src="{% static 'app/education.jpg' %}" class="square responsive-img">
+    </div>
+    <div class="col l2 s3">
+      <img src="{% static 'app/environment.jpg' %}" class="square responsive-img">
+    </div>
+  </div>
+{% endblock %}

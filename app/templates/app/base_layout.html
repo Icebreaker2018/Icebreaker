@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/base_layout.css' %}">
+    <script type="text/javascript" src="{% static 'app/base_layout.js' %}"></script>
+
+    <title></title>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-wrapper header">
+        <a href="#" class="brand-logo left hide-on-med-and-down">Logo</a>
+        <a href="#" class="brand-logo center hide-on-large-only">Logo</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="#">Sign Up</a></li>
+          <li><a href="#">LogIn</a></li>
+          <li><a href="#">How It Works</a></li>
+        </ul>
+        <a class="left hide-on-large-only dropdown-trigger btn" data-target='dropdown1'>Drop</a>
+        <!---<ul id='dropdown1' class='dropdown-content'>
+          <li><a href="#!">one</a></li>
+          <li><a href="#!">two</a></li>
+          <li class="divider" tabindex="-1"></li>
+          <li><a href="#!">three</a></li>
+          <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
+          <li><a href="#!"><i class="material-icons">cloud</i>five</a></li>
+        </ul>--->
+      </div>
+    </nav>
+    <main>
+      <div class="container">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </main>
+    <footer class="page-footer" style="background-color:black">
+          <div class="container">
+            <div class="row">
+              <div class="col l2 s12">
+                <h5 class="white-text">How it Works</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">NGO's</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Corporates</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Individuals</a></li>
+                </ul>
+              </div>
+              <div class="col l2 offset-l1 s12">
+                <h5 class="white-text">About Us</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">Team Icebreaker</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Blog</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Careers</a></li>
+                </ul>
+              </div>
+              <div class="col l2 offset-l1 s12">
+                <h5 class="white-text">Support</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">FAQ's</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Fundraising Tips</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Contact Us</a></li>
+                </ul>
+              </div>
+              <div class="col l2 offset-l1 s12">
+                <h5 class="white-text">Follow Us</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2014 Copyright Text
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+            </div>
+          </div>
+        </footer>
+  </body>
+</html>
