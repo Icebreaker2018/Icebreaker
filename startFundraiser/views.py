@@ -1,0 +1,195 @@
+from django.shortcuts import render, get_object_or_404, render_to_response, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from datetime import date, datetime, timedelta
+from django.template import loader
+from django.http import HttpResponse, Http404
+from django.views import generic
+
+from .models import Campaign, CampaignStatus
+from .forms import CampaignForm, UserForm
+
+IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
+
+
+def index(request):
+    projects = Campaign.objects.all()
+    query = request.GET.get('q')
+    if query:
+        projects = projects.filter(
+            Q(campaign_Title__icontains=query) |
+            Q(campaign_Tagline__icontains=query) |
+            Q(campaign_Category__icontains=query) |
+            Q(tags__icontains=query)
+        ).distinct()
+        return render(request, 'startFundraiser/campaigns.html', {'projects': projects})
+    else:
+        return render(request, 'startFundraiser/campaigns.html', {'projects': projects})
+
+
+def home(request):
+    return render(request, 'startFundraiser/base.html')
+
+
+def creative(request):
+    projects = Campaign.objects.filter(campaign_Category__icontains='art')
+    return render(request, 'startFundraiser/campaigns.html', {'projects': projects})
+
+
+def social(request):
+    projects = Campaign.objects.filter(campaign_Category__icontains='culture')
+    return render(request, 'startFundraiser/campaigns.html', {'projects': projects})
+
+
+def tech(request):
+    projects = Campaign.objects.filter(campaign_Category__icontains='education')
+    return render(request, 'startFundraiser/campaigns.html', {'projects': projects})
+
+
+# def campaigns(request):
+#     projects = Campaign.objects.all()
+#     return render(request, 'startFundraiser/campaigns.html', {'projects': projects})
+
+
+class IndexView(generic.ListView):
+    template_name = 'startFundraiser/campaigns.html'
+    context_object_name = 'projects'
+
+    def get_queryset(self):
+        return Campaign.objects.filter(
+            start_Date__lte=date.today()
+        ).order_by('-start_Date')
+
+
+def validate_start_campaign(start, end, file_type):
+    error_message = {}
+    duration = end - start
+    delta = int(duration.days)
+    print(delta)
+    print(start)
+    print(date.today())
+    if delta > 40 or delta < 7:
+        error_message['duration'] = 'Check the campaign duration'
+    if file_type not in IMAGE_FILE_TYPES:
+        error_message['image']: 'Image file must be PNG, JPG, or JPEG'
+    if start < date.today():
+        error_message['startDate']: 'Re-enter the start date to a future date'
+
+    return error_message
+
+
+@login_required(login_url="http://127.0.0.1:8000/login_user/")
+def start_campaign(request):
+    form = CampaignForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        campaign = form.save(commit=False)
+        campaign.user = request.user
+        campaign.image = request.FILES['image']
+        file_type = campaign.image.url.split('.')[-1]
+        file_type = file_type.lower()
+        start = form.cleaned_data['start_Date']
+        end = form.cleaned_data['end_Date']
+        error_message = validate_start_campaign(start, end, file_type)
+        print(error_message)
+        if error_message:
+            context = {
+                 'campaign': campaign,
+                 'form': form,
+                 'error_message': error_message,
+            }
+            return render(request, 'startFundraiser/campaign-form.html', context)
+        campaign.save()
+        return render(request, 'startFundraiser/detail.html', {'campaign1': campaign})
+    context = {
+         "form": form
+     }
+    return render(request, 'startFundraiser/campaign-form.html', context)
+
+
+@login_required(login_url="http://127.0.0.1:8000/login_user/")
+def campaign_update(request, pk, template_name='startFundraiser/campaign--form.html'):
+    campaign = get_object_or_404(Campaign, pk=pk)
+    form = CampaignForm(request.POST or None, instance=campaign)
+    if form.is_valid() and request.user == campaign.user:
+        form.save()
+        return redirect('detail', pk=pk)
+    return render(request, template_name, {'form': form})
+
+
+def detail(request, campaign_id):
+    #   campaign1 = Campaign.objects.filter(pk=campaign_id)
+    campaign1 = get_object_or_404(Campaign, pk=campaign_id)
+
+    if request.user.is_authenticated and campaign1.user == request.user:
+        if campaign1.tags:
+            tag = campaign1.tags.split()
+            context = {
+                'is_editable': True,
+                'campaign1': campaign1,
+                'tag': tag
+            }
+        else:
+            context = {
+                'is_editable': True,
+                'campaign1': campaign1
+            }
+    else:
+        if campaign1.tags:
+            tag = campaign1.tags.split()
+            context = {
+                'campaign1': campaign1,
+                'tag': tag
+            }
+        else:
+            context = {
+                'campaign1': campaign1
+            }
+    return render(request, 'startFundraiser/detail.html', context)
+
+
+def logout_user(request):
+    logout(request)
+    form = UserForm(request.POST or None)
+    context = {
+        "form": form,
+    }
+    return render(request, 'startFundraiser/login.html', context)
+
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                campaigns = Campaign.objects.filter(user=request.user)
+                return render(request, 'startFundraiser/base.html', {'campaigns': campaigns})
+            else:
+                return render(request, 'startFundraiser/login.html',
+                              {'error_message': 'Your account has been disabled'})
+        else:
+            return render(request, 'startFundraiser/login.html', {'error_message': 'Invalid login'})
+    return render(request, 'startFundraiser/login.html')
+
+
+def register(request):
+    form = UserForm(request.POST or None)
+    if form.is_valid():
+        user = form.save(commit=False)
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user.set_password(password)
+        user.save()
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                campaigns = Campaign.objects.filter(user=request.user)
+                return render(request, 'startFundraiser/base.html', {'campaigns': campaigns})
+    context = {
+        "form": form,
+    }
+    return render(request, 'startFundraiser/register.html', context)
