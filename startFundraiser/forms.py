@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
+from ckeditor.widgets import CKEditorWidget
 from django.utils.translation import gettext_lazy as _
-from .models import Campaign, FAQs, Update
+from .models import Campaign, FAQs, Update,Post
 
 
 class DateInput(forms.DateInput):
@@ -82,3 +83,7 @@ class FAQsForm(forms.ModelForm):
         model = FAQs
         fields = '__all__'
 
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title','description','description2','body','order','slug']

@@ -3,6 +3,7 @@ from django.db.models import PROTECT
 from django.utils import timezone
 import datetime
 from datetime import timedelta
+from PIL import Image
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 
@@ -96,3 +97,17 @@ class Update(models.Model):
 
     def __str__(self):
         return self.text
+
+class Post(models.Model):
+    title = models.CharField(max_length = 255, blank = True, null = True)
+    description = RichTextUploadingField(blank = True, null = True)
+    description2 = RichTextUploadingField(blank = True, null = True, config_name = 'special')
+    body = models.TextField(blank = True, null = True)
+    order = models.IntegerField(blank = True, null = True)
+    slug = models.SlugField(default = '', blank = True)
+
+    def save(self):
+        self.slug = slugify(self.title)
+        super(Post, self).save()
+    def __str__(self):
+        return '%s' % self.title

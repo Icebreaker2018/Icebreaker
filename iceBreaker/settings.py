@@ -144,8 +144,21 @@ CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
+
+
 CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': None,
+    'default':{
+        'toolbar':'Custom',
+        'height':500,
+        'toolbar_Custom':[
+            ['Bold', 'Link', 'Image'],
+        ],
     },
+    'special':{
+        'toolbar':'Special',
+        'toolbar_Special':[
+            ['Bold','CodeSnippet'],
+        ],
+        'extraPlugins': 'codesnippet',
+    }
 }

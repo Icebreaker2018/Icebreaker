@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from . import settings
 from django.conf.urls.static import static
+from startFundraiser import views as blog_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,9 @@ urlpatterns = [
     path('register/', include('register.urls')),
     path('startfundraiser/', include('startFundraiser.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    url(r'add/post/', blog_views.add_post, name='add_post'),
+    url(r'^edit/post/(?P<id>\d+)/$', blog_views.edit_post, name='edit_post'),
+    url(r'del/post/(?P<id>\d+)/', blog_views.del_post, name='del_post'),
 ]
 
 if settings.DEBUG:
