@@ -4,6 +4,7 @@ from django.utils import timezone
 import datetime
 from datetime import timedelta
 from django.contrib.auth.models import User
+from ckeditor_uploader.fields import RichTextUploadingField
 
 choose_from_categories = (
     ('creative', (
@@ -86,3 +87,12 @@ class FAQs(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     question = models.TextField(max_length=100, blank=True)
     answer = models.TextField(max_length=200, blank=True)
+
+
+class Update(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    text = RichTextUploadingField()
+    created_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.text

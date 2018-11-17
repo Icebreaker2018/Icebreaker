@@ -15,3 +15,26 @@
      $('#status').fadeOut();
      $('#preloader').delay(350).fadeOut('slow');
  }); //anonymous function
+
+ $(document).ready(function() {
+     $(function() {
+         $( "#dialogbox" ).dialog({
+             modal: true,
+             closeOnEscape: false,
+             dialogClass: "no-close",
+             resizable: false,
+             draggable: false,
+             width: 600,
+             buttons: [
+                 {
+                     text: "Confirm",
+                     click: function() {
+                         $( this ).dialog( "close" );
+                     }
+                 }
+                    ]
+         });
+     });
+ });
+
+ $()

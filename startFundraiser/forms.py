@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
-from .models import Campaign, FAQs
+from .models import Campaign, FAQs, Update
 
 
 class DateInput(forms.DateInput):
@@ -67,6 +67,13 @@ class UserForm(forms.ModelForm):
 #     class Meta:
 #         model = Funding
 #         fields = ['goal', 'start_Date', 'duration']
+
+
+class UpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Update
+        fields = ['text']
 
 
 class FAQsForm(forms.ModelForm):

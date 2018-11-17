@@ -23,10 +23,15 @@
                      <span class="glyphicon glyphicon-map-marker" style="float: left"></span>
                      <h5>{{ campaign1.city }}, {{ campaign1.country }}</h5>
                      <br><br>
+                     {% if is_editable %}
+                        <span class="glyphicon glyphicon-edit"><a href="{% url 'startFundraiser:campaign_edit' campaign1.id %}">Edit</a></span>&nbsp;
+                        <span class="glyphicon glyphicon-trash"><a href="{% url 'startFundraiser:campaign_delete' campaign1.id %}">Delete</a></span>
+                     {% endif %}
+                     <br><br>
                      <h4 style="color: #6c757d">Goal</h4>
                      <p>&#8377;{{ campaign1.goal }}</p>
                      <br>
-                     <p style="color: #6c757d">&#8377;{{ campaign1.pledged }} raised by {{ campaign1.people_pledged }} supporters</p>
+                     <p style="color: #6c757d">&#8377;<strong>{{ campaign1.pledged }}</strong> raised by {{ campaign1.people_pledged }} supporters</p>
                      <br><br>
                     <button type="submit" class="btn" style="background-color: #d39e00; font-family: sans-serif">
                         <span class="glyphicon glyphicon-piggy-bank"></span> Support It
@@ -54,12 +59,16 @@
     </div>
     <br><br><br>
     <div class="row justify-content-center">
-                <div class="col-lg-2"><h4 style="color: #6c757d">FAQs</h4></div>
-                <div class="col-lg-2"><h4 style="color: #6c757d">Comments</h4></div>
-                <div class="col-lg-2"><h4 style="color: #6c757d">Updates</h4></div>
+                <div class="col-lg-2" id="faqs"><h4 style="color: #6c757d">FAQs({{ campaign1.fAQs_set.count }})</h4></div>
+                <div class="col-lg-2" id="comments"><h4 style="color: #6c757d">Comments</h4></div>
+                <div class="col-lg-2" id="updates"><h4 style="color: #6c757d">Updates({{ campaign1.update_set.count }})</h4>
+                <br>
+                {% if is_editable %}
+                    <a class="btn btn-default" href="{% url 'startFundraiser:add_update' campaign1.id %}">New Update</a>
+                {% endif %}
+                </div>
                 <div class="col-lg-2"><h4 style="color: #6c757d">Supporters</h4></div>
     </div>
-
 
     <br><br><br>
         <div class="row justify-content-center">
@@ -78,17 +87,32 @@
 
 
     <br><br><br>
-        <div class="row-justify-content-left">
-            <div class="col-lg-10">
-                {% if is_editable %}
-                    <p><a href="{% url 'startFundraiser:campaign_edit' campaign.id %}">Edit</a></p>
-                {% endif %}
-            </div>
-        </div>
-</div>
+
+
+<hr>
+{% for update in campaign1.update_set.all %}
+    <div class="update">
+        <div class="date">{{ update.created_date }}</div>
+        <strong>{{ campaign1.user }}</strong>
+        <p>{{ update.text|safe }}</p>
+    </div>
+{% empty %}
+    <p>No updates! </p>
+{% endfor %}
+
+
+
+<hr>
+{% for faq in campaign1.fAQs_set.all %}
+    <div class="update">
+        <strong>{{ faq.question }}</strong>
+        <p>{{ faq.answer }}</p>
+    </div>
+{% empty %}
+    <p>No faqs! </p>
+{% endfor %}
+
+
 {% endblock %}
 
-
-
-
-
+</div>

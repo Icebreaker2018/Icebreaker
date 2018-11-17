@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'ckeditor',
+    'ckeditor_uploader',
+    'register',
+    'social_django'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +54,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'yagnakarthik100@gmail.com'
+EMAIL_HOST_PASSWORD = 'Karthik100%'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 
 ROOT_URLCONF = 'iceBreaker.urls'
 
@@ -126,3 +138,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # ]
 MEDIA_URL ='/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+    },
+}
