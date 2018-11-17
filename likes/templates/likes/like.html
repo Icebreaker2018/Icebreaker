@@ -1,0 +1,10 @@
+{% extends 'app/base_layout.html' %}
+
+{% block content %}
+  <div>
+    <form action="{% url 'like' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" name="button">Like</button>
+    </form>
+  </div>
+{% endblock %}

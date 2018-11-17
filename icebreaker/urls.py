@@ -7,4 +7,5 @@ urlpatterns = [
     path('app/',include('app.urls')),
     path('register/',include('register.urls')),
     path('comment/',include('comment.urls')),
+    path('likes/',include('likes.urls')),
 ]

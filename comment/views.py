@@ -10,17 +10,19 @@ def comment(request):
     if request.method == 'POST':
         form = forms.createcomment(request.POST)
         if form.is_valid():
-            a = request.POST.get('content').split(' ')
-            b = ['fuck','crap','shit']
+            a = request.POST.get('content')
+            regex = re.compile('[^a-zA-Z]')
+            e = regex.sub('', a)
+            b = ['fuck','crap','shit','asshole','bitch','fucker']
             d = 0
-            for c in a:
-                if c in b:
+            for c in b:
+                if (e.find(c) != -1):
                     d = d+1
             if d==0:
                 instance = form.save(commit=False)
                 instance.author = request.user
                 instance.save()
-                return HttpResponse('comment is {}'.format(a))
+                return HttpResponse('comment is {}'.format(e))
             else:
                 return HttpResponse('Do not use bad words')
     else:
