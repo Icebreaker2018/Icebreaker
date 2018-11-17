@@ -5,6 +5,7 @@ import datetime
 from datetime import timedelta
 from PIL import Image
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 from ckeditor_uploader.fields import RichTextUploadingField
 
 choose_from_categories = (

@@ -1,4 +1,4 @@
-{% extend "startFundraiser/base.html" %}
+{% extends "startFundraiser/base.html" %}
 
 {% block content %}
 {% for post in posts %}
@@ -23,7 +23,7 @@
   <br>
 
   <a href="{% url 'edit_post' id=post.pk %}">Edit</a>
-  <a href="{% url 'del_post'  id= post.pk%}">Delete</a>
+  <a href="{% url 'del_post'  id=post.pk %}">Delete</a>
 
   {% endfor %}
 

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm
 from ckeditor.widgets import CKEditorWidget
 from django.utils.translation import gettext_lazy as _
-from .models import Campaign, FAQs, Update,Post
+from .models import Campaign, FAQs, Update, Post
 
 
 class DateInput(forms.DateInput):

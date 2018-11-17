@@ -7,8 +7,8 @@ from django.template import loader
 from django.http import HttpResponse, Http404
 from django.views import generic
 
-from .models import Campaign, CampaignStatus, FAQs, Update
-from .forms import CampaignForm, UserForm, UpdateForm, FAQsForm
+from .models import Campaign, CampaignStatus, FAQs, Update, Post
+from .forms import CampaignForm, UserForm, UpdateForm, FAQsForm, PostForm
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -254,7 +254,7 @@ def del_post(request, id ):
     instance= get_object_or_404(Post, pk= id)
     instance.delete()
     return render(request, 'startFundraiser/base.html')
-    
+
 
 '''
 def logout_user(request):

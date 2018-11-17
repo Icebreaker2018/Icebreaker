@@ -41,7 +41,8 @@ def user_login(request):
             if user:
                 if user.is_active:
                     login(request, user)
-                    return redirect('project:post_list')
+                    #return redirect('project:post_list')
+                    return render(request, "startFundraiser/base.html")
 
                 else:
                     return HttpResponse('User is not active')
@@ -55,11 +56,11 @@ def user_login(request):
 
     contexts = {'form':form}
 
-    return render(request, 'project/login.html', contexts)
+    return render(request, 'register/login.html', contexts)
 
 def user_logout(request):
     logout(request)
-    return redirect('project:post_list')
+    return render(request, "startFundraiser/base.html")
 
 #fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
 def email_verify(form):
@@ -93,13 +94,13 @@ def user_register(request):
 
             #new_user.save()
             #Profile.objects.create(user = new_user)
-            return render(request,'project/verify.html', context1)
+            return render(request,'register/verify.html', context1)
     else:
         form = UserRegistrationForm()
     context = {
         'form':form
     }
-    return render(request,'registration/register.html', context)
+    return render(request,'register/register.html', context)
 
 def new_user_reg(request):
     if request.method == 'POST':
@@ -124,7 +125,7 @@ def edit_profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            return redirect('project:post_list')
+            return render(request, "startFundraiser/base.html")
 
     else:
         user_form = UserEditForm(instance=request.user)
@@ -146,4 +147,4 @@ def edit_profile(request):
 
     }
 
-    return render(request, 'project/edit_profile.html', contexts)
+    return render(request, 'register/edit_profile.html', contexts)

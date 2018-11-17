@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'add/post/', blog_views.add_post, name='add_post'),
     url(r'^edit/post/(?P<id>\d+)/$', blog_views.edit_post, name='edit_post'),
-    url(r'del/post/(?P<id>\d+)/', blog_views.del_post, name='del_post'),
+    url(r'del/post/(?P<id>\d+)/$', blog_views.del_post, name='del_post'),
 ]
 
 if settings.DEBUG:

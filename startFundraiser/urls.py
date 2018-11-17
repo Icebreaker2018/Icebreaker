@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^campaign/(?P<pk>\d+)/update/$', views.add_update, name='add_update'),
     url(r'^campaign/(?P<pk>\d+)/faq/$', views.add_faq, name='add_faq'),
     url(r'^index/$', views.index, name='index'),
+    url(r'^posts/$', views.blog_post, name='blog_post'),
 ]
