@@ -102,7 +102,7 @@ def index(request):
 
 
 def home(request):
-    article = Campaign.objects.all()
+    article = Campaign.objects.all().order_by('start_Date')
     return render(request, 'startFundraiser/base.html', {'trending':article})
 
 

@@ -88,7 +88,7 @@ def make_group(request):
 
         s = GroupTable(title=title, date=date, lat=lat, lon=lon,type=type, number=0, founder=request.user, address=address)
         s.save()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/community/my-group/')
 
 
     else:

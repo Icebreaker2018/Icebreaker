@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'marketplace',
     'community',
     'polls',
+    'testimony'
 ]
 
 MIDDLEWARE = [

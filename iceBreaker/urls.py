@@ -28,6 +28,7 @@ urlpatterns = [
     path('startfundraiser/', include('startFundraiser.urls')),
     path('community/', include('community.urls')),
     path('polls/', include('polls.urls')),
+    path('testimony/', include('testimony.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'add/post/', blog_views.add_post, name='add_post'),
     url(r'^edit/post/(?P<id>\d+)/$', blog_views.edit_post, name='edit_post'),

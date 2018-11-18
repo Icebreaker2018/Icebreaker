@@ -199,27 +199,27 @@
         {% csrf_token %}
         <p>
             <label>title</label>
-            <input type="text" name="title"> initial : {{ content.title }}
+            <input type="text" name="title" required> initial : {{ content.title }}
         </p>
         <p>
             <label>type</label>
-            <input type="text" name="type"> initial : {{ content.type }}
+            <input type="text" name="type" required> initial : {{ content.type }}
         </p>
         <p>
             <label>lat</label>
-            <input type="text" name="lat" id="lat1"> initial : {{ content.lat }}
+            <input type="text" name="lat" id="lat1" required> initial : {{ content.lat }}
         </p>
         <p>
             <label>lon</label>
-            <input type="text" name="lon" id="lon1"> initial : {{ content.lon }}
+            <input type="text" name="lon" id="lon1" required> initial : {{ content.lon }}
         </p>
         <p>
             <label>date</label>
-            <input type="date" name="date"> initial : {{ content.date }}
+            <input type="date" name="date" required> initial : {{ content.date }}
         </p>
 	<p>
             <label>address</label>
-            <input type="text" name="address" id="address"> initial : {{ content.address }}
+            <input type="text" name="address" id="address" required> initial : {{ content.address }}
         </p><input id="submit1" type="button" value="Geocode">
 
         <button type="submit">register</button>
@@ -356,4 +356,3 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoxHIV4EUz3PsPOwB_ehuLLDu4OE0ELLc&callback=initMap">
     </script>
   {% endblock %}
-

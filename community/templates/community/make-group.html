@@ -12,30 +12,30 @@
         {% csrf_token %}
         <p>
             <label>title</label>
-            <input type="text" name="title">
+            <input type="text" name="title" required>
         </p>
         <p>
             <label>type</label>
-            <input type="text" name="type">
+            <input type="text" name="type" required>
         </p>
         <p>
             <label>lat</label>
-            <input type="text" name="lat" id="lat1">
+            <input type="text" name="lat" id="lat1" required>
         </p>
         <p>
             <label>lon</label>
-            <input type="text" name="lon" id="lon1">
+            <input type="text" name="lon" id="lon1" required>
         </p>
         <p>
             <label>date</label>
-            <input type="date" name="date">
+            <input type="date" name="date" required>
         </p>
 	<p>
             <label>address</label>
-            <input type="text" name="address" id="address">
+            <input type="text" name="address" id="address" required>
         <input id="submit1" type="button" value="Geocode" class="btn btn-success"><br>
         </p>
-
+        <p>
         <button type="submit" class="btn btn-success">register</button>
         <br><br>
                 </p>
@@ -200,15 +200,15 @@
 	document.getElementById("address").value = "";
           addMarker(event.latLng, z);
          // map.setCenter(marker.getPosition());
-	
+
 
 	gecodeLatLng(geocoder, map, infowindow, z);
         });
-	
-	
-	
 
-	
+
+
+
+
 
       }
 
@@ -277,4 +277,3 @@
     </script>
     -->
    {% endblock %}
-
