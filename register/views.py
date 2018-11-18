@@ -42,7 +42,7 @@ def user_login(request):
                 if user.is_active:
                     login(request, user)
                     #return redirect('project:post_list')
-                    return render(request, "startFundraiser/base.html")
+                    return redirect("http://127.0.0.1:8000/startfundraiser/")
 
                 else:
                     return HttpResponse('User is not active')
@@ -113,7 +113,9 @@ def new_user_reg(request):
         new_user.set_password(request.POST['password1'])
         new_user.save()
         Profile.objects.create(user = new_user)
-    return HttpResponse('hello world congrats')
+        login(request, new_user)
+    return HttpResponse("logged in")
+    #return render(request, "startfundraiser/")
 
 
 

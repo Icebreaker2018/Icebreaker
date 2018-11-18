@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'register',
-    'social_django'
+    'social_django',
+    'marketplace',
 ]
 
 MIDDLEWARE = [
