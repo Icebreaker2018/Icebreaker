@@ -112,3 +112,10 @@ class Post(models.Model):
         super(Post, self).save()
     def __str__(self):
         return '%s' % self.title
+
+
+class comment(models.Model):
+    content = models.CharField(max_length=1000)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    author = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
+    camp = models.ForeignKey(Campaign, default=None, on_delete=models.PROTECT)
