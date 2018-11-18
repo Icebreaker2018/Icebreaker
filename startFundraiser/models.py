@@ -7,6 +7,7 @@ from PIL import Image
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.urls import reverse
 
 choose_from_categories = (
     ('creative', (
@@ -52,6 +53,7 @@ class Campaign(models.Model):
     pledged = models.FloatField(default=0.0)
     people_pledged = models.IntegerField(default=0)
     #    campaign_Status = models.ForeignKey(CampaignStatus, on_delete=models.PROTECT)
+    likes = models.ManyToManyField(User, related_name='likes',blank=True)
 
     def __str__(self):
         return self.campaign_Title
@@ -59,6 +61,8 @@ class Campaign(models.Model):
     def duration_of_campaign(self):
         return self.end_Date - self.start_Date
 
+    def get_absolute_url(self):
+        return reverse('startFundraiser:campaign_detail', args=[self.id])
     # def camapign_began(self):
     #     return datetime.
 
@@ -82,7 +86,7 @@ class CampaignStatus(models.Model):
 #     campaign_Status = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
 
-class FAQs(models.Model):
+class Faqs(models.Model):
     class Meta:
         verbose_name_plural = 'FAQs'
 
@@ -120,3 +124,10 @@ class comment(models.Model):
     author = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
     camp = models.ForeignKey(Campaign, default=None, on_delete=models.CASCADE)
     reply = models.ForeignKey('comment', null=True, related_name="replies",on_delete=models.CASCADE)
+
+
+class Backers(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    backer = models.CharField(max_length=50)
+    amount = models.FloatField(null=False, blank=False)
+    date_backed = models.DateTimeField(default=timezone.now)

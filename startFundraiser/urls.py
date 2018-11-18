@@ -23,7 +23,10 @@ urlpatterns = [
     url(r'^campaigns/tech/$', views.tech, name='tech'),
     url(r'^campaign/(?P<campaign_id>[0-9]+)/$', views.detail, name='campaign_detail'),
     url(r'^campaign/(?P<pk>\d+)/update/$', views.add_update, name='add_update'),
+    url(r'^campaign/(?P<pk>\d+)/comment/$', views.add_comment, name='add_comment'),
     url(r'^campaign/(?P<pk>\d+)/faq/$', views.add_faq, name='add_faq'),
     url(r'^index/$', views.index, name='index'),
     url(r'^posts/$', views.blog_post, name='blog_post'),
+    url(r'^campaign/(?P<pk>\d+)/support/$', views.campaign_support, name='campaign_support'),
+    url(r'^like/$', views.like_camp, name='like_camp'),
 ]

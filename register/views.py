@@ -113,9 +113,8 @@ def new_user_reg(request):
         new_user.set_password(request.POST['password1'])
         new_user.save()
         Profile.objects.create(user = new_user)
-        login(request, new_user)
-    return HttpResponse("logged in")
-    #return render(request, "startfundraiser/")
+        login(request,new_user)
+    return render(request,'startFundraiser/base.html')
 
 
 

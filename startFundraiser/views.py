@@ -7,14 +7,30 @@ from django.template import loader
 from django.http import HttpResponse, Http404 ,HttpResponseRedirect
 from django.views import generic
 
-from .models import Campaign, CampaignStatus, FAQs, Update, Post,comment
-from .forms import CampaignForm, UserForm, UpdateForm, FAQsForm, PostForm,createcomment
+from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment
+from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment
+from django.contrib.auth import get_user_model
 import re
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
+def campaign_support(request, pk):
+    campaign = get_object_or_404(Campaign, pk=pk)
+    if request.method == "POST":
+        form = BackersForm(request.POST)
+        if form.is_valid():
+            backers = form.save(commit=False)
+            backers.campaign = campaign
+            backers.save()
+            campaign.pledged = campaign.pledged + backers.amount
+            campaign.people_pledged = campaign.people_pledged + 1
+            campaign.save()
+            return redirect('startFundraiser:campaign_detail', campaign_id=pk)
+    else:
+        form = BackersForm()
+    return render(request, 'startFundraiser/support_it.html', {'form': form})
 
 
-@login_required(login_url="http://127.0.0.1:8000/register/login/")
+@login_required(login_url="http://127.0.0.1:8000/login_user/")
 def add_update(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if request.method == "POST":
@@ -29,20 +45,46 @@ def add_update(request, pk):
     return render(request, 'startFundraiser/add_update.html', {'form': form})
 
 
-@login_required(login_url="{% url 'register:user_login' %}")
+@login_required(login_url="http://127.0.0.1:8000/login_user/")
+def add_comment(request, pk):
+    campaign1 = get_object_or_404(Campaign, pk=pk)
+    if request.method == 'POST':
+        form = createcomment(request.POST)
+        if form.is_valid():
+            a = request.POST.get('content')
+            regex = re.compile('[^a-zA-Z]')
+            e = regex.sub('', a)
+            b = ['crap','shit']
+            d = 0
+            for c in b:
+                if (e.find(c) != -1):
+                    d = d+1
+            if d==0:
+                content = request.POST.get('content')
+                comment1 = comment.objects.create(camp = campaign1,author = request.user,content = content)
+                comment1.save()
+                return redirect('startFundraiser:campaign_detail', campaign_id=pk)
+                #return redirect("{% url 'startFundraiser:campaign_detail' campaign_id = campaign1.pk %}")
+            else:
+                return HttpResponse('Do not use bad words')
+    else:
+        form = createcomment()
+    return render(request, 'startFundraiser/createcomment.html', {'form': form})
+
+
+@login_required(login_url="http://127.0.0.1:8000/login_user/")
 def add_faq(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if request.method == "POST":
-        form = FAQsForm(request.POST)
+        form = FaqsForm(request.POST)
         if form.is_valid():
             faq = form.save(commit=False)
             faq.campaign = campaign
             faq.save()
             return redirect('startFundraiser:campaign_detail', campaign_id=pk)
     else:
-        form = FAQsForm()
+        form = FaqsForm()
     return render(request, 'startFundraiser/add_faq.html', {'form': form})
-
 
 def index(request):
     projects = Campaign.objects.all()
@@ -159,37 +201,12 @@ def campaign_delete(request, pk, template_name='startFundraiser/campaign-deletef
     return render(request, template_name, {'object': campaign})
 
 
-def detail(request, campaign_id):
+def detail(request,campaign_id):
     #   campaign1 = Campaign.objects.filter(pk=campaign_id)
     campaign1 = get_object_or_404(Campaign, pk=campaign_id)
-    comments = comment.objects.filter(camp=campaign1,reply=None).order_by('date')
-
-    if request.method == 'POST':
-        form = createcomment(request.POST)
-        if form.is_valid():
-            a = request.POST.get('content')
-            regex = re.compile('[^a-zA-Z]')
-            e = regex.sub('', a)
-            b = ['crap','shit']
-            d = 0
-            for c in b:
-                if (e.find(c) != -1):
-                    d = d+1
-            if d==0:
-                content = request.POST.get('content')
-                reply_id = request.POST.get('comment_id')
-                comment_qs = None
-                if reply_id:
-                    comment_qs = comment.objects.get(id = reply_id)
-                comment1 = comment.objects.create(camp = campaign1,author = request.user,content = content,reply = comment_qs)
-                comment1.save()
-                #return redirect("{% url 'startFundraiser:campaign_detail' campaign_id = campaign1.pk %}")
-            else:
-                return HttpResponse('Do not use bad words')
-    else:
-        form = createcomment()
-
-
+    is_liked = False
+    if campaign1.likes.filter(id = request.user.id).exists:
+        is_liked = True
     if request.user.is_authenticated and campaign1.user == request.user:
         if campaign1.tags:
             tag = campaign1.tags.split()
@@ -197,15 +214,13 @@ def detail(request, campaign_id):
                 'is_editable': True,
                 'campaign1': campaign1,
                 'tag': tag,
-                'form':form,
-                'comments':comments
+                'is_liked' : is_liked
             }
         else:
             context = {
                 'is_editable': True,
                 'campaign1': campaign1,
-                'form':form,
-                'comments':comments
+                'is_liked' : is_liked
             }
     else:
         if campaign1.tags:
@@ -213,19 +228,16 @@ def detail(request, campaign_id):
             context = {
                 'campaign1': campaign1,
                 'tag': tag,
-                'form':form,
-                'comments':comments
+                'is_liked' : is_liked
             }
         else:
             context = {
                 'campaign1': campaign1,
-                'form':form,
-                'comments':comments
+                'is_liked' : is_liked
             }
 
 
     return render(request, 'startFundraiser/detail.html', context)
-
 
 
 @login_required(login_url="http://127.0.0.1:8000/register/login/")
@@ -295,6 +307,16 @@ def del_post(request, id ):
     instance.delete()
     return render(request, 'startFundraiser/base.html')
 
+def like_camp(request):
+    campaign = get_object_or_404(Campaign, id = request.POST.get('camp_id'))
+    is_liked = False
+    if campaign.likes.filter(id = request.user.id).exists():
+        campaign.likes.remove(request.user)
+        is_liked = False
+    else:
+        campaign.likes.add(request.user)
+        is_liked = True
+    return HttpResponseRedirect(campaign.get_absolute_url())
 
 '''
 def logout_user(request):
