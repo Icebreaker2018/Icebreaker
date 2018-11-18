@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm
 from ckeditor.widgets import CKEditorWidget
 from django.utils.translation import gettext_lazy as _
-from .models import Campaign, FAQs, Update, Post
+from .models import Campaign, FAQs, Update, Post,comment
 
 
 class DateInput(forms.DateInput):
@@ -87,3 +87,9 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title','description','description2','body','order','slug']
+
+class createcomment(forms.ModelForm):
+    content = forms.CharField(label = "",widget = forms.Textarea(attrs={'class':'form-control','placeholder':'Text goes here','rows':'4','cols':'50'}))
+    class Meta:
+        model = comment
+        fields = ['content']

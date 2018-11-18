@@ -58,9 +58,38 @@
            </div>
     </div>
     <br><br><br>
+
+    <div  class="row justify-content-center">
+      <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+
     <div class="row justify-content-center">
                 <div class="col-lg-2" id="faqs"><h4 style="color: #6c757d">FAQs({{ campaign1.fAQs_set.count }})</h4></div>
-                <div class="col-lg-2" id="comments"><h4 style="color: #6c757d">Comments</h4></div>
+
+                <div class="col-lg-2" id="comments">
+                  <h4 style="color: #6c757d">Comments</h4>
+                  {% for comment in comments %}
+                    <p>{{ comment.content }}</p>
+                    <footer class = "blockquote-footer">by <cite>{{ comment.author }}</cite></footer>
+
+                    {% for reply in comment.replies.all %}
+                    <p>{{ reply.content }}</p>
+                    <footer class = "blockquote-footer">by <cite>{{ reply.author }}</cite></footer>
+
+                    {% endfor %}
+                    <form method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="comment_id" value="{{comment.id}}">
+                      {{ form }}
+                      <input type="submit" value="Submit">
+                    </form>
+                  {% endfor %}
+                </div>
+
                 <div class="col-lg-2" id="updates"><h4 style="color: #6c757d">Updates({{ campaign1.update_set.count }})</h4>
                 <br>
                 {% if is_editable %}

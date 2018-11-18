@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from django.template import loader
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404 ,HttpResponseRedirect
 from django.views import generic
 
-from .models import Campaign, CampaignStatus, FAQs, Update, Post
-from .forms import CampaignForm, UserForm, UpdateForm, FAQsForm, PostForm
+from .models import Campaign, CampaignStatus, FAQs, Update, Post,comment
+from .forms import CampaignForm, UserForm, UpdateForm, FAQsForm, PostForm,createcomment
+import re
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -161,6 +162,33 @@ def campaign_delete(request, pk, template_name='startFundraiser/campaign-deletef
 def detail(request, campaign_id):
     #   campaign1 = Campaign.objects.filter(pk=campaign_id)
     campaign1 = get_object_or_404(Campaign, pk=campaign_id)
+    comments = comment.objects.filter(camp=campaign1,reply=None).order_by('date')
+
+    if request.method == 'POST':
+        form = createcomment(request.POST)
+        if form.is_valid():
+            a = request.POST.get('content')
+            regex = re.compile('[^a-zA-Z]')
+            e = regex.sub('', a)
+            b = ['crap','shit']
+            d = 0
+            for c in b:
+                if (e.find(c) != -1):
+                    d = d+1
+            if d==0:
+                content = request.POST.get('content')
+                reply_id = request.POST.get('comment_id')
+                comment_qs = None
+                if reply_id:
+                    comment_qs = comment.objects.get(id = reply_id)
+                comment1 = comment.objects.create(camp = campaign1,author = request.user,content = content,reply = comment_qs)
+                comment1.save()
+                #return redirect("{% url 'startFundraiser:campaign_detail' campaign_id = campaign1.pk %}")
+            else:
+                return HttpResponse('Do not use bad words')
+    else:
+        form = createcomment()
+
 
     if request.user.is_authenticated and campaign1.user == request.user:
         if campaign1.tags:
@@ -168,25 +196,37 @@ def detail(request, campaign_id):
             context = {
                 'is_editable': True,
                 'campaign1': campaign1,
-                'tag': tag
+                'tag': tag,
+                'form':form,
+                'comments':comments
             }
         else:
             context = {
                 'is_editable': True,
-                'campaign1': campaign1
+                'campaign1': campaign1,
+                'form':form,
+                'comments':comments
             }
     else:
         if campaign1.tags:
             tag = campaign1.tags.split()
             context = {
                 'campaign1': campaign1,
-                'tag': tag
+                'tag': tag,
+                'form':form,
+                'comments':comments
             }
         else:
             context = {
-                'campaign1': campaign1
+                'campaign1': campaign1,
+                'form':form,
+                'comments':comments
             }
+
+
     return render(request, 'startFundraiser/detail.html', context)
+
+
 
 @login_required(login_url="http://127.0.0.1:8000/register/login/")
 def funds_received_notification(request):
