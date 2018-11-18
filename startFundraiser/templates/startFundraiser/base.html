@@ -51,7 +51,13 @@
                                   <a class="dropdown-item" href="#">Communities</a>
                                 </div>
                         </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item" id="links"><a href="{% url 'register:user_logout' %}">Logout</a></li>
+                        hii {{ request.user }}
+                        {% else %}
                         <li class="nav-item" id="links"><a href="{% url 'register:user_register' %}">SignUp</a></li>
+                        <li class="nav-item" id="links"><a href="{% url 'register:user_login' %}">Login</a></li>
+                        {% endif%}
                     </ul>
                 </div>
             </div>
