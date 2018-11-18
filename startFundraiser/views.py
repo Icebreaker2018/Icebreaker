@@ -30,7 +30,7 @@ def campaign_support(request, pk):
     return render(request, 'startFundraiser/support_it.html', {'form': form})
 
 
-@login_required(login_url="http://127.0.0.1:8000/login_user/")
+@login_required(login_url="http://127.0.0.1:8000/register/login/")
 def add_update(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if request.method == "POST":
@@ -45,7 +45,7 @@ def add_update(request, pk):
     return render(request, 'startFundraiser/add_update.html', {'form': form})
 
 
-@login_required(login_url="http://127.0.0.1:8000/login_user/")
+@login_required(login_url="http://127.0.0.1:8000/register/login/")
 def add_comment(request, pk):
     campaign1 = get_object_or_404(Campaign, pk=pk)
     if request.method == 'POST':
@@ -72,7 +72,7 @@ def add_comment(request, pk):
     return render(request, 'startFundraiser/createcomment.html', {'form': form})
 
 
-@login_required(login_url="http://127.0.0.1:8000/login_user/")
+@login_required(login_url="http://127.0.0.1:8000/register/login/")
 def add_faq(request, pk):
     campaign = get_object_or_404(Campaign, pk=pk)
     if request.method == "POST":

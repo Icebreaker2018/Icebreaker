@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'register',
     'social_django',
     'marketplace',
+    'community',
+    'polls',
 ]
 
 MIDDLEWARE = [
