@@ -115,7 +115,8 @@ class Post(models.Model):
 
 
 class comment(models.Model):
-    content = models.CharField(max_length=1000)
+    content = models.TextField(max_length=1000)
     date = models.DateTimeField(auto_now_add=True, null=True)
-    author = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
-    camp = models.ForeignKey(Campaign, default=None, on_delete=models.PROTECT)
+    author = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
+    camp = models.ForeignKey(Campaign, default=None, on_delete=models.CASCADE)
+    reply = models.ForeignKey('comment', null=True, related_name="replies",on_delete=models.CASCADE)

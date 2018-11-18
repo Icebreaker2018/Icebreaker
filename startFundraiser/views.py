@@ -162,6 +162,7 @@ def campaign_delete(request, pk, template_name='startFundraiser/campaign-deletef
 def detail(request, campaign_id):
     #   campaign1 = Campaign.objects.filter(pk=campaign_id)
     campaign1 = get_object_or_404(Campaign, pk=campaign_id)
+    comments = comment.objects.filter(camp=campaign1,reply=None).order_by('date')
 
     if request.method == 'POST':
         form = createcomment(request.POST)
@@ -176,14 +177,18 @@ def detail(request, campaign_id):
                     d = d+1
             if d==0:
                 content = request.POST.get('content')
-                comment1 = comment.objects.create(camp = campaign1,author = request.user,content = content)
+                reply_id = request.POST.get('comment_id')
+                comment_qs = None
+                if reply_id:
+                    comment_qs = comment.objects.get(id = reply_id)
+                comment1 = comment.objects.create(camp = campaign1,author = request.user,content = content,reply = comment_qs)
                 comment1.save()
+                #return redirect("{% url 'startFundraiser:campaign_detail' campaign_id = campaign1.pk %}")
             else:
                 return HttpResponse('Do not use bad words')
     else:
         form = createcomment()
 
-    comments = comment.objects.filter(camp=campaign1).order_by('date')
 
     if request.user.is_authenticated and campaign1.user == request.user:
         if campaign1.tags:
