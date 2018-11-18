@@ -122,7 +122,7 @@
                           <p>{{trends.overview}}</p>
 
                           <hr>
-                          <a href="https://api.whatsapp.com/send?phone=&text={{ trends.campaign_Title }}{{trends.image.url }}"><img style="height:25px;width:30px;align:left;" src="{% static 'images/share.jpg' %}" alt="share"></a>
+                          <a href="https://api.whatsapp.com/send?phone=&text={{trends.image.url }} {{ trends.campaign_Title }} {{ trends.overview }}"><img style="height:25px;width:30px;align:left;" src="{% static 'images/share.jpg' %}" alt="share"></a>
                           <a href="#"><img style="height:25px;width:25px;align:left;" src="{% static 'images/Capture1.jpg' %}" alt="like"></a>
                         </div>
                     </div>
