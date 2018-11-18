@@ -8,7 +8,7 @@ from django.http import HttpResponse, Http404 ,HttpResponseRedirect
 from django.views import generic
 
 from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply
-from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment,createreply
+from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment,createreply,BackersForm
 from django.contrib.auth import get_user_model
 import re
 
