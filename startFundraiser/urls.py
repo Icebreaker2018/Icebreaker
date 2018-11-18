@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^posts/$', views.blog_post, name='blog_post'),
     url(r'^campaign/(?P<pk>\d+)/support/$', views.campaign_support, name='campaign_support'),
     url(r'^like/$', views.like_camp, name='like_camp'),
+
 ]

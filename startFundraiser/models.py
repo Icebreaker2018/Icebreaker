@@ -63,6 +63,9 @@ class Campaign(models.Model):
 
     def get_absolute_url(self):
         return reverse('startFundraiser:campaign_detail', args=[self.id])
+
+    def total_likes(self):
+        return self.likes.count()
     # def camapign_began(self):
     #     return datetime.
 
@@ -123,7 +126,12 @@ class comment(models.Model):
     date = models.DateTimeField(auto_now_add=True, null=True)
     author = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
     camp = models.ForeignKey(Campaign, default=None, on_delete=models.CASCADE)
-    reply = models.ForeignKey('comment', null=True, related_name="replies",on_delete=models.CASCADE)
+
+class reply(models.Model):
+    content = models.TextField(max_length=1000)
+    comment = models.ForeignKey(comment, default=None,null=True,on_delete=models.CASCADE)
+    author = models.ForeignKey(User,default=None,null=True,on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, null=True)
 
 
 class Backers(models.Model):

@@ -7,8 +7,8 @@ from django.template import loader
 from django.http import HttpResponse, Http404 ,HttpResponseRedirect
 from django.views import generic
 
-from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment
-from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment
+from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply
+from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment,createreply
 from django.contrib.auth import get_user_model
 import re
 
@@ -214,13 +214,15 @@ def detail(request,campaign_id):
                 'is_editable': True,
                 'campaign1': campaign1,
                 'tag': tag,
-                'is_liked' : is_liked
+                'is_liked' : is_liked,
+                'total_likes' : campaign1.total_likes()
             }
         else:
             context = {
                 'is_editable': True,
                 'campaign1': campaign1,
-                'is_liked' : is_liked
+                'is_liked' : is_liked,
+                'total_likes':campaign1.total_likes()
             }
     else:
         if campaign1.tags:
@@ -228,12 +230,14 @@ def detail(request,campaign_id):
             context = {
                 'campaign1': campaign1,
                 'tag': tag,
-                'is_liked' : is_liked
+                'is_liked' : is_liked,
+                'total_likes':campaign1.total_likes()
             }
         else:
             context = {
                 'campaign1': campaign1,
-                'is_liked' : is_liked
+                'is_liked' : is_liked,
+                'total_likes':campaign1.total_likes()
             }
 
 
@@ -317,6 +321,9 @@ def like_camp(request):
         campaign.likes.add(request.user)
         is_liked = True
     return HttpResponseRedirect(campaign.get_absolute_url())
+
+
+
 
 '''
 def logout_user(request):

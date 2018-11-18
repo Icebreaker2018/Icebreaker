@@ -42,6 +42,7 @@
                         <button type="submit" name="camp_id" value="{{ campaign1.id }}">Dislike</button>
                        {% endif %}
                      </form>
+                     {{ total_likes }} Likes
 
 
                      <br>
@@ -109,8 +110,6 @@
                   {% for comment in campaign1.comment_set.all %}
                     <p>{{ comment.content }}</p>
                     <footer class = "blockquote-footer">by <cite>{{ comment.author }}</cite></footer>
-
-
                   {% endfor %}
                   </a>
                 </div>

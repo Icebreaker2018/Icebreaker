@@ -60,7 +60,7 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    return render(request, "startFundraiser/base.html")
+    return redirect("http://127.0.0.1:8000/startfundraiser/")
 
 #fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
 def email_verify(form):
@@ -114,7 +114,7 @@ def new_user_reg(request):
         new_user.save()
         Profile.objects.create(user = new_user)
         login(request,new_user)
-    return render(request,'startFundraiser/base.html')
+    return redirect("http://127.0.0.1:8000/startfundraiser/")
 
 
 
