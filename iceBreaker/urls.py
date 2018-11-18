@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
     path('register/', include('register.urls')),
+    path('marketplace/', include('marketplace.urls')),
     path('startfundraiser/', include('startFundraiser.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'add/post/', blog_views.add_post, name='add_post'),

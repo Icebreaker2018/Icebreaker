@@ -42,7 +42,7 @@ def user_login(request):
                 if user.is_active:
                     login(request, user)
                     #return redirect('project:post_list')
-                    return redirect('http://127.0.0.1:8000/startfundraiser/')
+                    return redirect("http://127.0.0.1:8000/startfundraiser/")
 
                 else:
                     return HttpResponse('User is not active')
