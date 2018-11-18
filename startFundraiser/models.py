@@ -4,6 +4,7 @@ from django.utils import timezone
 import datetime
 from datetime import timedelta
 from django.contrib.auth.models import User
+from ckeditor_uploader.fields import RichTextUploadingField
 
 choose_from_categories = (
     ('creative', (
@@ -79,10 +80,29 @@ class CampaignStatus(models.Model):
 #     campaign_Status = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
 
-class FAQs(models.Model):
+class Faqs(models.Model):
     class Meta:
         verbose_name_plural = 'FAQs'
 
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     question = models.TextField(max_length=100, blank=True)
     answer = models.TextField(max_length=200, blank=True)
+
+
+class Update(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    text = RichTextUploadingField()
+    created_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.text
+
+
+class Backers(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    backer = models.CharField(max_length=50)
+    amount = models.FloatField(null=False, blank=False)
+    date_backed = models.DateTimeField(default=timezone.now)
+
+
+

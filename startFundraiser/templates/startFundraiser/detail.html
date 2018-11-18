@@ -12,7 +12,7 @@
                         {% endif %}
         </div>
         <div class="col-lg-4">
-                     <h3 style="color: #6c757d">{{ campaign1.campaign_Category }}</h3>
+                     <h3 style="color: #6c757d">{{ campaign1.campaign_Category|capfirst }}</h3>
                      <hr>
                      <h1>{{ campaign1.campaign_Title }}</h1>
                      <br>
@@ -21,16 +21,28 @@
                      <h4 style="color: #6c757d">Campaign Initiator</h4>
                      <h5>{{ campaign1.user }}</h5>
                      <span class="glyphicon glyphicon-map-marker" style="float: left"></span>
-                     <h5>{{ campaign1.city }}, {{ campaign1.country }}</h5>
-                     <br><br>
+                     <h5>{{ campaign1.city|capfirst }}, {{ campaign1.country|capfirst }}</h5>
+                     <br>
+                     {% if is_editable %}
+                     <strong>
+                        <span class="glyphicon glyphicon-edit"><a href="{% url 'startFundraiser:campaign_edit' campaign1.id %}" >Edit</a></span>&nbsp;
+                        <span class="glyphicon glyphicon-trash"><a href="{% url 'startFundraiser:campaign_delete' campaign1.id %}" >Delete</a></span>&nbsp;
+                        <span class="glyphicon glyphicon-pencil"><a href="{% url 'startFundraiser:add_update' campaign1.id %}" >Update</a></span>&nbsp;
+                        <span class="glyphicon glyphicon-plus"><a href="{% url 'startFundraiser:add_faq' campaign1.id %}" >FAQ</a></span>&nbsp;
+                      </strong>
+                     {% endif %}
+                     <br>
+                     <br>
                      <h4 style="color: #6c757d">Goal</h4>
                      <p>&#8377;{{ campaign1.goal }}</p>
                      <br>
-                     <p style="color: #6c757d">&#8377;{{ campaign1.pledged }} raised by {{ campaign1.people_pledged }} supporters</p>
-                     <br><br>
-                    <button type="submit" class="btn" style="background-color: #d39e00; font-family: sans-serif">
-                        <span class="glyphicon glyphicon-piggy-bank"></span> Support It
-                    </button>
+                     <p style="color: #6c757d">&#8377;<strong>{{ campaign1.pledged }}</strong> raised by {{ campaign1.people_pledged }} supporters</p>
+                     <br>
+                    <span class="glyphicon glyphicon-piggy-bank"><a href="{% url 'startFundraiser:campaign_support' campaign1.id %}" role="button">
+                    Support It
+                    </a>
+                    </span>&nbsp;
+
         </div>
     </div>
     <br><br><br>
@@ -54,13 +66,64 @@
     </div>
     <br><br><br>
     <div class="row justify-content-center">
-                <div class="col-lg-2"><h4 style="color: #6c757d">FAQs</h4></div>
-                <div class="col-lg-2"><h4 style="color: #6c757d">Comments</h4></div>
-                <div class="col-lg-2"><h4 style="color: #6c757d">Updates</h4></div>
-                <div class="col-lg-2"><h4 style="color: #6c757d">Supporters</h4></div>
+
+                <div class="col-lg-2" ><a href="#faqs" style="color: #6c757d"><strong>FAQs({{ campaign1.faqs_set.count }})</strong></a></div>
+                <div class="col-lg-2" ><a href="#comments" style="color: #6c757d"><strong>Comments</strong></a></div>
+                <div class="col-lg-2" ><a href="#updates" style="color: #6c757d"><strong>Updates</strong>({{ campaign1.update_set.count }})</a></div>
+                <div class="col-lg-2" ><a href="#supporters" style="color: #6c757d"><strong>Supporters</strong>({{ campaign1.people_pledged }})</a></div>
+
+                <div class="col-lg-8"><hr></div>
+
+                <!--FAQs-->
+                <div class="col-lg-8">
+                FAQs
+                <a name="faqs">
+                    {% for faq in campaign1.faqs_set.all %}
+                    <div class="update">
+                    <strong>{{ faq.question }}</strong>
+                    <p>{{ faq.answer }}</p>
+                    </div>
+                    {% empty %}
+                    <p>No faqs! </p>
+                    {% endfor %}
+                </a>
+                <hr>
+                </div>
+                <!--Comments-->
+
+                <!--Updates-->
+                <div class="col-lg-8">
+                UPDATES
+                <a name="updates">
+                {% for update in campaign1.update_set.all %}
+                <div class="update">
+                    <div class="date">{{ update.created_date }}</div>
+                    <strong>{{ campaign1.user }}</strong>
+                    <p>{{ update.text|safe }}</p>
+                </div>
+                {% empty %}
+                    <p>No updates! </p>
+                {% endfor %}
+                </a>
+                <hr>
+                </div>
+
+                <!--Supporters-->
+                <div class="col-lg-8">
+                SUPPORTERS
+                <a name="supporters">
+                {% for supporter in campaign1.backers_set.all %}
+                    <div class="update" style="text-align: center">
+                        <strong>{{ supporter.backer }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ supporter.amount }}
+                    </div>
+                {% empty %}
+                    <p>No backers! </p>
+                {% endfor %}
+                </a>
+                <hr>
+                </div>
+
     </div>
-
-
     <br><br><br>
         <div class="row justify-content-center">
 
@@ -73,22 +136,5 @@
                 {% endfor %}
             {% endif %}
             <br><br><br>
-           </div>
-        </div>
 
-
-    <br><br><br>
-        <div class="row-justify-content-left">
-            <div class="col-lg-10">
-                {% if is_editable %}
-                    <p><a href="{% url 'startFundraiser:campaign_edit' campaign.id %}">Edit</a></p>
-                {% endif %}
-            </div>
-        </div>
-</div>
 {% endblock %}
-
-
-
-
-

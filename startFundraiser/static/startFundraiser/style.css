@@ -197,3 +197,6 @@ ul-navbar-nav > li > a:focus {
     display: block;
 }
 
+.update {
+    margin: 20px 0px 20px 20px;
+}

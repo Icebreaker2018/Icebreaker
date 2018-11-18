@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
-from .models import Campaign, FAQs
+from .models import Campaign, Faqs, Update, Backers
 
 
 class DateInput(forms.DateInput):
@@ -45,33 +45,24 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['username', 'email', 'password']
 
-# class BasicsForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Basics
-#         fields = '__all__'
-#
-#
-# class ContentForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Content
-#         fields = '__all__'
-#         help_texts = {
-#             'overview': _('Tell us about your campaign'),
-#         }
-#
-#
-# class FundingForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Funding
-#         fields = ['goal', 'start_Date', 'duration']
 
-
-class FAQsForm(forms.ModelForm):
+class UpdateForm(forms.ModelForm):
 
     class Meta:
-        model = FAQs
-        fields = '__all__'
+        model = Update
+        fields = ['text']
+
+
+class FaqsForm(forms.ModelForm):
+
+    class Meta:
+        model = Faqs
+        fields = ['question', 'answer']
+
+
+class BackersForm(forms.ModelForm):
+
+    class Meta:
+        model = Backers
+        fields = ['backer', 'amount']
 
