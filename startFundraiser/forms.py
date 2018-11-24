@@ -14,7 +14,7 @@ class CampaignForm(forms.ModelForm):
 
     class Meta:
         model = Campaign
-        exclude = ['user', 'pledged', 'people_pledged']
+        exclude = ['user', 'pledged', 'people_pledged','likes']
         widgets = {
             'start_Date': DateInput(),
             'end_Date': DateInput(),

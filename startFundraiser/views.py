@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from django.template import loader
-from django.http import HttpResponse, Http404 ,HttpResponseRedirect
+from django.http import HttpResponse, Http404 ,HttpResponseRedirect, JsonResponse
 from django.views import generic
+from django.template.loader import render_to_string
 
 from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply
 from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment,createreply,BackersForm
@@ -205,7 +206,7 @@ def detail(request,campaign_id):
     #   campaign1 = Campaign.objects.filter(pk=campaign_id)
     campaign1 = get_object_or_404(Campaign, pk=campaign_id)
     is_liked = False
-    if campaign1.likes.filter(id = request.user.id).exists:
+    if campaign1.likes.filter(id = request.user.id).exists():
         is_liked = True
     if request.user.is_authenticated and campaign1.user == request.user:
         if campaign1.tags:
@@ -312,15 +313,23 @@ def del_post(request, id ):
     return render(request, 'startFundraiser/base.html')
 
 def like_camp(request):
-    campaign = get_object_or_404(Campaign, id = request.POST.get('camp_id'))
+    campaign = get_object_or_404(Campaign, id = request.POST.get('id'))
     is_liked = False
     if campaign.likes.filter(id = request.user.id).exists():
-        campaign.likes.remove(request.user)
         is_liked = False
+        campaign.likes.remove(request.user)
     else:
-        campaign.likes.add(request.user)
         is_liked = True
-    return HttpResponseRedirect(campaign.get_absolute_url())
+        campaign.likes.add(request.user)
+    context = {
+        'campaign': campaign,
+        'is_liked' : is_liked,
+        'total_likes':campaign.total_likes()
+    }
+
+    if request.is_ajax():
+        html = render_to_string('startFundraiser/like_section.html', context, request=request)
+        return JsonResponse({'form':html})
 
 
 

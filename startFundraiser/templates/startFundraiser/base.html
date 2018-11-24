@@ -16,10 +16,35 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{% static 'startFundraiser/style.css' %}">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+        <!--- Ajax CDNs --->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     </head>
 
     <body>
+        <script type="text/javascript">
+          $(document).ready(function(event){
+            $(document).on('click','#like',function(event){
+              event.preventDefault();
+              var id = {{ campaign1.id }};
+              $.ajax({
+                type: 'POST',
+                url: '{% url "startFundraiser:like_camp" %}',
+                data: {'id':id, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                dataType: 'json',
+                success: function(response){
+                  $('#like-section').html(response['form'])
+                  console.log($('#like-section').html(response['form']));
+                },
+                error: function(rs, e){
+                  console.log(rs.responseText);
+                },
+              });
+            });
+          });
+        </script>
+
+
         <!-- Header -->
 <header>
     <nav class="navbar navbar-fixed-top">

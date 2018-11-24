@@ -16,6 +16,7 @@
      $('#preloader').delay(350).fadeOut('slow');
  }); //anonymous function
 
+
  $(document).ready(function() {
      $(function() {
          $( "#dialogbox" ).dialog({
@@ -36,5 +37,3 @@
          });
      });
  });
-
- $()
