@@ -46,7 +46,12 @@ INSTALLED_APPS = [
     'marketplace',
     'community',
     'polls',
-    'testimony'
+    'testimony',
+    'django.contrib.sites', # added for allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'stripe',
 ]
 
 MIDDLEWARE = [
@@ -61,8 +66,8 @@ MIDDLEWARE = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'yagnakarthik100@gmail.com'
-EMAIL_HOST_PASSWORD = 'Karthik100%'
+EMAIL_HOST_USER = 'ruthala.shiva512@gmail.com'
+EMAIL_HOST_PASSWORD = 'Charan@01'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -124,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC+5:30'
 
 USE_I18N = True
 
@@ -148,7 +153,26 @@ CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
+if DEBUG:
+    # test keys
+    STRIPE_PUBLISHABLE_KEY = 'pk_test_uv520wrOAmj5S0R6pSMqfQuO'
+    STRIPE_SECRET_KEY = 'sk_test_9RtMPnED0F2g7hQJ3eOpvRBe'
+    BT_ENVIRONMENT='sandbox'
+    BT_MERCHANT_ID='rx5td5k3vgwp9bbt'
+    BT_PUBLIC_KEY='djj8jkw9fhs92bgk'
+    BT_PRIVATE_KEY='a910474671c890bb40ed9c848adaa1c5'
+else:
+    # live keys
+    STRIPE_PUBLISHABLE_KEY = 'YOUR STRIPE LIVE PUB KEY'
+    STRIPE_SECRET_KEY = 'YOUR STRIPE LIVE SECRET KEY'
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
+SITE_ID = 1
 
 CKEDITOR_CONFIGS = {
     'default':{

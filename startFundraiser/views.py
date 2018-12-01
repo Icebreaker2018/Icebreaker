@@ -1,16 +1,22 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from django.template import loader
 from django.http import HttpResponse, Http404 ,HttpResponseRedirect, JsonResponse
 from django.views import generic
 from django.template.loader import render_to_string
-
+from .extras import generate_order_id,transact   #payment
 from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply
 from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment,createreply,BackersForm
 from django.contrib.auth import get_user_model
+from django_currentuser.middleware import (get_current_user, get_current_authenticated_user)
+from django import template
+from django.template import Context
+from django.template.loader import render_to_string, get_template
+from django.core.mail import send_mail,EmailMessage
 import re
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
@@ -25,6 +31,31 @@ def campaign_support(request, pk):
             campaign.pledged = campaign.pledged + backers.amount
             campaign.people_pledged = campaign.people_pledged + 1
             campaign.save()
+            # mail notification
+            User = get_user_model()
+            uname = request.user.username
+            Funds =  backers.amount
+            project = campaign.campaign_Title
+            Project_by = campaign.user
+            mail_id = User.objects.get(username = Project_by).email
+
+            subject = "Recived Funds"
+            to = ['ruthala.shiva512@gmail.com',]
+            to.append(mail_id)
+            from_email = 'ruthala.shiva512@gmail.com'
+
+            details = {
+                'donar': uname,
+                'amount': Funds,
+                'reciver': Project_by,
+                'project': project,
+            }
+
+            message = get_template('startFundraiser/mail.html').render(dict(details))
+            msg = EmailMessage(subject, message, to=to, from_email=from_email)
+            msg.content_subtype = 'html'
+            msg.send()
+
             return redirect('startFundraiser:campaign_detail', campaign_id=pk)
     else:
         form = BackersForm()
@@ -245,45 +276,11 @@ def detail(request,campaign_id):
     return render(request, 'startFundraiser/detail.html', context,)
 
 
-@login_required(login_url="http://127.0.0.1:8000/register/login/")
-def funds_received_notification(request):
-    User = get_user_model()
-    uname = request.user.username # to get_current_user
-
-    app_url = (request.path).split('/') # to get url (while doing payment) and split it to get project_id
-    projectId = '5' #app_url[3]
-
-    Funds = funds.objects.get(username = uname) #to access the donated amount by current user through funds table
-    Project = Campaign.objects.get(id = projectId)  #to access the project title & project_by from blog/project table based on project_id
-    Project_by = User.objects.get(username = Project.fullname)
-    mail_id = Project_by.email
-
-
-    subject = "Recived Funds"
-    to = ['ruthala.shiva512@gmail.com,yagnakarthik100@gmail.com']
-    to.append(mail_id)
-    from_email = 'ruthala.shiva512@gmail.com'
-
-    details = {
-        'donar': uname,
-        'amount': Funds.donation,
-        'reciver': Project.fullname, #Funds.project_title
-        'project': Project.title, #"project_name"#
-    }
-
-    message = get_template('blog/mail.html').render(dict(details))
-    msg = EmailMessage(subject, message, to=to, from_email=from_email)
-    msg.content_subtype = 'html'
-    msg.send()
-
-    return HttpResponse('notified')
-
 def blog_post(request):
     web_updates = Post.objects.all()
     return render(request, 'startFundraiser/view_post.html',{'posts':web_updates})
 
 @login_required(login_url="http://127.0.0.1:8000/register/login/")
-
 def add_post(request):
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -331,7 +328,60 @@ def like_camp(request):
         html = render_to_string('startFundraiser/like_section.html', context, request=request)
         return JsonResponse({'form':html})
 
+'''
+@login_required()
+def checkout(request, **kwargs):
+    client_token = generate_client_token()
+    existing_order = get_user_pending_order(request)
+    publishKey = settings.STRIPE_PUBLISHABLE_KEY
+    if request.method == 'POST':
+        token = request.POST.get('stripeToken', False)
+        if token:
+            try:
+                charge = stripe.Charge.create(
+                    amount=100*existing_order.get_cart_total(),
+                    currency='usd',
+                    description='Example charge',
+                    source=token,
+                )
 
+                return redirect(reverse('shopping_cart:update_records',
+                        kwargs={
+                            'token': token
+                        })
+                    )
+            except stripe.CardError as e:
+                message.info(request, "Your card has been declined.")
+        else:
+            result = transact({
+                'amount': existing_order.get_cart_total(),
+                'payment_method_nonce': request.POST['payment_method_nonce'],
+                'options': {
+                    "submit_for_settlement": True
+                }
+            })
+
+            if result.is_success or result.transaction:
+                return redirect(reverse('shopping_cart:update_records',
+                        kwargs={
+                            'token': result.transaction.id
+                        })
+                    )
+            else:
+                for x in result.errors.deep_errors:
+                    messages.info(request, x)
+                return redirect(reverse('shopping_cart:checkout'))
+
+    context = {
+        'order': existing_order,
+        'client_token': client_token,
+        'STRIPE_PUBLISHABLE_KEY': publishKey
+    }
+
+    return render(request, 'shopping_cart/checkout.html', context)
+
+
+'''
 
 
 '''

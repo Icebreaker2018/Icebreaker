@@ -9,6 +9,8 @@ class product(models.Model):
     overview = models.TextField()
     date = models.DateTimeField(auto_now_add = True)
     image = models.ImageField(upload_to="media", blank=True)
+    cost = models.FloatField(null = True)
+    quantity = models.IntegerField(null = True)
 #    pic = models.ForeignKey(profile, on_delete=models.PROTECT,null = True, blank = True)
 
     def __str__(self):
