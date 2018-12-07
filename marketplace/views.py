@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from .models import product
+from .models import product, Order, OrderItem
 from . import forms
+from django.contrib import messages
+from django.template.loader import render_to_string
+import datetime
+import stripe
+from .extras import generate_order_id
 
 
 def products_all(request):
@@ -52,3 +57,23 @@ def delete_product(request, id):
     instance= get_object_or_404(product, pk= id)
     instance.delete()
     return redirect('marketplace:products_blog')
+
+def add_to_cart(request, id):
+    prod = product.objects.get(id=id)
+    user_order, status = Order.objects.get_or_create(user=request.user, is_ordered=False)
+    if status:
+        ref_code = generate_order_id()
+        order_item, status = OrderItem.objects.get_or_create(product=prod, ref_code=ref_code)
+        user_order.items.add(order_item)
+        user_order.ref_code = ref_code
+        user_order.save()
+    else:
+        order_item, status = OrderItem.objects.get_or_create(product=prod, ref_code=user_order.ref_code)
+        user_order.items.add(order_item)
+        user_order.save()
+    return render(request, 'marketplace/cart.html', {'order':user_order})
+
+def add_quantity(request, id):
+    item = OrderItem.objects.get(id=id)
+    item.qty = item.qty + 1
+    return redirect('/marketplace/add_to_cart/'+str(item.product.id))

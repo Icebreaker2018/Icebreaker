@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^add/$',views.add_product, name="add_product"),
     url(r'edit_product/(?P<id>\d+)/$', views.edit_product, name="edit_product"),
     url(r'del_product/(?P<id>\d+)/$', views.delete_product, name="delete_product"),
-
+    url(r'add_to_cart/(?P<id>\d+)/$', views.add_to_cart, name="add_to_cart"),
+    url(r'add_quantity/(?P<id>\d+)/$', views.add_quantity, name="add_quantity"),
 ]
