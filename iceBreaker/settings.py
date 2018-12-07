@@ -38,6 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'djcelery',
+    'django_celery_results',
+    'django_celery_beat',
+    'django_cron',
+    'django_crontab',
+    'django_inlinecss',
     'widget_tweaks',
     'ckeditor',
     'ckeditor_uploader',
@@ -46,7 +53,12 @@ INSTALLED_APPS = [
     'marketplace',
     'community',
     'polls',
-    'testimony'
+    'testimony',
+    'django.contrib.sites', # added for allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'stripe',
 ]
 
 MIDDLEWARE = [
@@ -59,10 +71,32 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+BROKER_URL = 'redis://localhost:6379'
+#CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+SOCIAL_AUTH_GITHUB_KEY = 'fe848f0f58887ad76750'
+SOCIAL_AUTH_GITHUB_SECRET = '33f1dd6b4b2ae3fd7119d6f0aa36eaee6bea9336'
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
+
+SOCIAL_AUTH_FACEBOOK_KEY = '285495742076753'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'e7b12c1362d40c4c1f1042df469aad7f'
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = 'startFundraiser:home'
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'yagnakarthik100@gmail.com'
-EMAIL_HOST_PASSWORD = 'Karthik100%'
+EMAIL_HOST_USER = 'ruthala.shiva512@gmail.com'
+EMAIL_HOST_PASSWORD = 'Charan@01'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -148,7 +182,26 @@ CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
+if DEBUG:
+    # test keys
+    STRIPE_PUBLISHABLE_KEY = 'pk_test_uv520wrOAmj5S0R6pSMqfQuO'
+    STRIPE_SECRET_KEY = 'sk_test_9RtMPnED0F2g7hQJ3eOpvRBe'
+    BT_ENVIRONMENT='sandbox'
+    BT_MERCHANT_ID='dvz9yrrcm82f2wyw'
+    BT_PUBLIC_KEY='mt4yjrfht47g24m6'
+    BT_PRIVATE_KEY='84030d13637a181d7c5f198dabbca0c8'
+else:
+    # live keys
+    STRIPE_PUBLISHABLE_KEY = 'YOUR STRIPE LIVE PUB KEY'
+    STRIPE_SECRET_KEY = 'YOUR STRIPE LIVE SECRET KEY'
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
+SITE_ID = 1
 
 CKEDITOR_CONFIGS = {
     'default':{
