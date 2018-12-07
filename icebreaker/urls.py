@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from . import settings
+from . import views as ass
 from django.conf.urls.static import static
 from startFundraiser import views as blog_views
 
@@ -33,6 +34,8 @@ urlpatterns = [
     url(r'add/post/', blog_views.add_post, name='add_post'),
     url(r'^edit/post/(?P<id>\d+)/$', blog_views.edit_post, name='edit_post'),
     url(r'del/post/(?P<id>\d+)/$', blog_views.del_post, name='del_post'),
+    #url(r'api/eqlog/',app.EquationLogListView.as_view()),
+
 ]
 
 if settings.DEBUG:

@@ -9,7 +9,7 @@ from . import forms
 
 def products_all(request):
     product_blog = product.objects.all()
-    return render(request, 'marketplace/productsblog.html',{'products':product_blog})
+    return render(request, 'marketplace/blog.html',{'products':product_blog})
 
 def product_details(request, slug):
     pro_details = product.objects.get(pk=slug)

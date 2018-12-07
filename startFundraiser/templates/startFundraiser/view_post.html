@@ -2,24 +2,13 @@
 
 {% block content %}
 {% for post in posts %}
-  <a class="post" href="#">
-    <div class="post__title post__item">
-      {{ post.pk }}
-      {{ post.title}}
 
-    </div>
-    <div class="">
-      <img class="" src="/media/{{ post.image }}" />
-    </div>
-    <div class="">
+    <div class="post__title post__item">
+    
+      {{ post.title}}
       {{ post.description | safe }}
-      {{ post.body }}
+      {{ post.date}}
     </div>
-  <!--  <div class="post__description post__item">
-      {{ post.description2 | safe }}
-    </div> -->
-    <a class="">Read more</a>
-  </a>
   <br>
 
   <a href="{% url 'edit_post' id=post.pk %}">Edit</a>

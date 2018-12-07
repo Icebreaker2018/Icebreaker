@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.urls import reverse
 from django.db.models import Q
 from datetime import date, datetime, timedelta
@@ -8,8 +9,9 @@ from django.template import loader
 from django.http import HttpResponse, Http404 ,HttpResponseRedirect, JsonResponse
 from django.views import generic
 from django.template.loader import render_to_string
-from .extras import generate_order_id,transact   #payment
-from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply
+from .extras import generate_order_id,transact , generate_client_token  #payment
+from django.contrib import messages
+from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply,Backers
 from .forms import CampaignForm, UserForm, UpdateForm, FaqsForm, PostForm,createcomment,createreply,BackersForm
 from django.contrib.auth import get_user_model
 from django_currentuser.middleware import (get_current_user, get_current_authenticated_user)
@@ -18,6 +20,12 @@ from django.template import Context
 from django.template.loader import render_to_string, get_template
 from django.core.mail import send_mail,EmailMessage
 import re
+
+#from rest_framework.decorators import api_view
+#from rest_framework.response import Response
+#from myapp.serializer import EquationLogSerializer
+#from rest_framework.views import APIView
+
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 def campaign_support(request, pk):
@@ -31,7 +39,7 @@ def campaign_support(request, pk):
             campaign.pledged = campaign.pledged + backers.amount
             campaign.people_pledged = campaign.people_pledged + 1
             campaign.save()
-            # mail notification
+          # mail notification
             User = get_user_model()
             uname = request.user.username
             Funds =  backers.amount
@@ -56,10 +64,14 @@ def campaign_support(request, pk):
             msg.content_subtype = 'html'
             msg.send()
 
+
             return redirect('startFundraiser:campaign_detail', campaign_id=pk)
     else:
         form = BackersForm()
     return render(request, 'startFundraiser/support_it.html', {'form': form})
+
+
+
 
 
 @login_required(login_url="http://127.0.0.1:8000/register/login/")
@@ -282,32 +294,41 @@ def blog_post(request):
 
 @login_required(login_url="http://127.0.0.1:8000/register/login/")
 def add_post(request):
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post_item = form.save(commit =False)
-            post_item.save()
-            return render(request, 'startFundraiser/base.html')
-            #return HttpResponse("Saved post")
+    if request.user.groups.filter(name ='admin').exists():
+        if request.method == "POST":
+            form = PostForm(request.POST)
+            if form.is_valid():
+                post_item = form.save(commit =False)
+                post_item.save()
+                return render(request, 'startFundraiser/base.html')
+                #return HttpResponse("Saved post")
+        else:
+            form = PostForm()
+        return render(request, 'startFundraiser/post.html',{'form':form})
     else:
-        form = PostForm()
-    return render(request, 'startFundraiser/post.html',{'form':form})
-
+        return HttpResponse("Sorry..., You have no previlage")
+@login_required
 def edit_post(request, id= None):
-    instance= get_object_or_404(Post, pk= id)
-    form= PostForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return render(request, 'startFundraiser/base.html')
-    context={
-        'form':form,
-    }
-    return render(request, 'startFundraiser/post.html', context)
-
+    if request.user.groups.filter(name ='admin').exists():
+        instance= get_object_or_404(Post, pk= id)
+        form= PostForm(request.POST or None, instance=instance)
+        if form.is_valid():
+            form.save()
+            return render(request, 'startFundraiser/base.html')
+        context={
+            'form':form,
+        }
+        return render(request, 'startFundraiser/post.html', context)
+    else:
+        return HttpResponse("Sorry..., You have no previlage")
+@login_required
 def del_post(request, id ):
-    instance= get_object_or_404(Post, pk= id)
-    instance.delete()
-    return render(request, 'startFundraiser/base.html')
+    if request.user.groups.filter(name ='admin').exists():
+        instance= get_object_or_404(Post, pk= id)
+        instance.delete()
+        return render(request, 'startFundraiser/base.html')
+    else:
+        return HttpResponse("Sorry..., You have no previlage")
 
 def like_camp(request):
     campaign = get_object_or_404(Campaign, id = request.POST.get('id'))
@@ -328,106 +349,158 @@ def like_camp(request):
         html = render_to_string('startFundraiser/like_section.html', context, request=request)
         return JsonResponse({'form':html})
 
-'''
+def test(request):
+    return HttpResponse("hi")
+def pay(request, pk):
+    campaign = get_object_or_404(Campaign, pk=pk)
+    '''
+    if request.method == "GET":
+        form = BackersForm(request.GET)
+        if form.is_valid():
+            backers = form.save(commit=False)
+            backers.campaign = campaign
+            backers.save()
+            campaign.pledged = campaign.pledged + backers.amount
+            campaign.people_pledged = campaign.people_pledged + 1
+            campaign.save()
+            context={
+                'form': form,
+                'pk':pk,
+            }
+
+            return redirect('startFundraiser:campaign_detail', campaign_id=pk)
+    else:
+        form = BackersForm()'''
+    context={
+    'pk':pk,
+        }
+    return render(request, 'startFundraiser/support_it.html', context)
+
+
 @login_required()
-def checkout(request, **kwargs):
+def checkout(request, pk, **kwargs):
+    campaign = get_object_or_404(Campaign, pk=pk)
     client_token = generate_client_token()
-    existing_order = get_user_pending_order(request)
+    #existing_order = get_user_pending_order(request)
+    #amt = 0
     publishKey = settings.STRIPE_PUBLISHABLE_KEY
+
     if request.method == 'POST':
-        token = request.POST.get('stripeToken', False)
-        if token:
-            try:
-                charge = stripe.Charge.create(
-                    amount=100*existing_order.get_cart_total(),
-                    currency='usd',
-                    description='Example charge',
-                    source=token,
-                )
-
-                return redirect(reverse('shopping_cart:update_records',
-                        kwargs={
-                            'token': token
-                        })
-                    )
-            except stripe.CardError as e:
-                message.info(request, "Your card has been declined.")
+        if 'pay' in request.POST:
+            global amt
+            amt = request.POST['pay']
+            print(amt)
         else:
-            result = transact({
-                'amount': existing_order.get_cart_total(),
-                'payment_method_nonce': request.POST['payment_method_nonce'],
-                'options': {
-                    "submit_for_settlement": True
-                }
-            })
-
-            if result.is_success or result.transaction:
-                return redirect(reverse('shopping_cart:update_records',
-                        kwargs={
-                            'token': result.transaction.id
-                        })
+            token = request.POST.get('stripeToken', False)
+            if token:
+                try:
+                    charge = stripe.Charge.create(
+                        amount=amt,
+                        currency='usd',
+                        description='Example charge',
+                        source=token,
                     )
+                    print(amt)
+                    return redirect(reverse('startFundraiser:update_records',
+                            kwargs={
+                                'token': token,
+                                'pk':pk,
+                                'amount':amt,
+                            })
+                        )
+                except stripe.CardError as e:
+                    message.info(request, "Your card has been declined.")
             else:
-                for x in result.errors.deep_errors:
-                    messages.info(request, x)
-                return redirect(reverse('shopping_cart:checkout'))
+                result = transact({
+                    'amount': amt,
+                    'payment_method_nonce': request.POST['payment_method_nonce'],
+                    'options': {
+                        "submit_for_settlement": True
+                    }
+                })
 
-    context = {
-        'order': existing_order,
-        'client_token': client_token,
-        'STRIPE_PUBLISHABLE_KEY': publishKey
-    }
+                if result.is_success or result.transaction:
+                    entry_token =result.transaction.id
+                    '''
+                    return redirect(reverse('startFundraiser:update_records',
+                            kwargs={
+                                'token': result.transaction.id,
+                                'pk':pk,
+                                'amount':amt,
+                            })
+                        )
+                    '''
+                    campaign = get_object_or_404(Campaign, pk=pk)
 
-    return render(request, 'shopping_cart/checkout.html', context)
+                    # create a transaction
+                    transaction = Backers(backer=request.user,
+                                            campaign = campaign,
+                                            token=entry_token ,
+                                            amount = amt,
+                                            )
+                    # save the transcation (otherwise doesn't exist)
+                    transaction.save()
+                    campaign.pledged = float(campaign.pledged) + float(amt)
+                    campaign.people_pledged = campaign.people_pledged + 1
+                    campaign.save()
 
+                    # send an email to the customer
+                    # look at tutorial on how to send emails with sendgrid
+                    messages.info(request, "Thank you! Your purchase was successful!")
+                    #return HttpResponse("updated")
+                    #testing
+                    return HttpResponse(f"{entry_token}<br>{pk}<br>{amt}<br>")
+
+                    #return redirect(reverse('startFundraiser:update_records',pk))
+                else:
+                    for x in result.errors.deep_errors:
+                        messages.info(request, x)
+                    return redirect(reverse('startFundraiser:checkout'+str(pk)))
+
+        context = {
+            'order': amt,
+            'client_token': client_token,
+            'STRIPE_PUBLISHABLE_KEY': publishKey
+        }
+
+        return render(request, 'startFundraiser/checkout.html', context)
+
+
+
+
+@login_required()
+def update_transaction_records(request,pk):
+    campaign = get_object_or_404(Campaign, pk=pk)
+
+    # create a transaction
+    transaction = Backers(backer=request.user,
+                            campaign = campaign,
+                            token=entry_token ,
+                            amount = amt,
+                            )
+    # save the transcation (otherwise doesn't exist)
+    transaction.save()
+    campaign.pledged = float(campaign.pledged) + float(amt)
+    campaign.people_pledged = campaign.people_pledged + 1
+    campaign.save()
+
+    # send an email to the customer
+    # look at tutorial on how to send emails with sendgrid
+    messages.info(request, "Thank you! Your purchase was successful!")
+    return HttpResponse("updated")
+    #return redirect(reverse('accounts:my_profile'))
 
 '''
+class EquationLogListView(APIView):
+    def get(self,request):
+        equationlogs = EquationLog.objects.all()
+        serializer = EquationLogSerializer(equationlogs,many=True)
+        return Response(serializer.data)
 
-
-'''
-def logout_user(request):
-    logout(request)
-    form = UserForm(request.POST or None)
-    context = {
-        "form": form,
-    }
-    return render(request, 'startFundraiser/login.html', context)
-
-
-def login_user(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                campaigns = Campaign.objects.filter(user=request.user)
-                return render(request, 'startFundraiser/base.html', {'campaigns': campaigns})
-            else:
-                return render(request, 'startFundraiser/login.html',
-                              {'error_message': 'Your account has been disabled'})
-        else:
-            return render(request, 'startFundraiser/login.html', {'error_message': 'Invalid login'})
-    return render(request, 'startFundraiser/login.html')
-
-
-def register(request):
-    form = UserForm(request.POST or None)
-    if form.is_valid():
-        user = form.save(commit=False)
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        user.set_password(password)
-        user.save()
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                campaigns = Campaign.objects.filter(user=request.user)
-                return render(request, 'startFundraiser/base.html', {'campaigns': campaigns})
-    context = {
-        "form": form,
-    }
-    return render(request, 'startFundraiser/register.html', context)
+    def post(self,request):
+        serializer = EquationLogSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
 '''
