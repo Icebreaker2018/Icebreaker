@@ -62,7 +62,7 @@ MIDDLEWARE = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'yagnakarthik100@gmail.com'
-EMAIL_HOST_PASSWORD = 'Karthik100%'
+EMAIL_HOST_PASSWORD = 'krishnavamsi123'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -147,7 +147,7 @@ CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
-
+LOGIN_REDIRECT_URL = 'register:user_login'
 
 
 CKEDITOR_CONFIGS = {
