@@ -9,6 +9,14 @@ from django.template import loader
 from django.http import HttpResponse, Http404 ,HttpResponseRedirect, JsonResponse
 from django.views import generic
 from django.template.loader import render_to_string
+#django-rest API
+from rest_framework import status
+from .models import Backers ##API models
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from startFundraiser.serializer import fundsSerializer
+from rest_framework.views import APIView
+
 from .extras import generate_order_id,transact , generate_client_token  #payment
 from django.contrib import messages
 from .models import Campaign, CampaignStatus, Faqs, Update, Post,comment,reply,Backers
@@ -490,17 +498,16 @@ def update_transaction_records(request,pk):
     return HttpResponse("updated")
     #return redirect(reverse('accounts:my_profile'))
 
-'''
-class EquationLogListView(APIView):
+ ## django-rest API ##
+class fundsListView(APIView):
     def get(self,request):
-        equationlogs = EquationLog.objects.all()
-        serializer = EquationLogSerializer(equationlogs,many=True)
+        fundings = Backers.objects.all()
+        serializer = fundsSerializer(fundings,many=True)
         return Response(serializer.data)
 
     def post(self,request):
-        serializer = EquationLogSerializer(data=request.data)
+        serializer = fundsSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
-'''
