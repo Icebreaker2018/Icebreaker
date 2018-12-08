@@ -59,21 +59,44 @@ def delete_product(request, id):
     return redirect('marketplace:products_blog')
 
 def add_to_cart(request, id):
-    prod = product.objects.get(id=id)
-    user_order, status = Order.objects.get_or_create(user=request.user, is_ordered=False)
-    if status:
-        ref_code = generate_order_id()
-        order_item, status = OrderItem.objects.get_or_create(product=prod, ref_code=ref_code)
-        user_order.items.add(order_item)
-        user_order.ref_code = ref_code
-        user_order.save()
+    if request.method == "POST":
+        prod = product.objects.get(id=id)
+        user_order, status = Order.objects.get_or_create(user=request.user, is_ordered=False)
+        if status:
+            ref_code = generate_order_id()
+            order_item, status = OrderItem.objects.get_or_create(product=prod, ref_code=ref_code)
+            user_order.items.add(order_item)
+            user_order.ref_code = ref_code
+            user_order.save()
+        else:
+            order_item, status = OrderItem.objects.get_or_create(product=prod, ref_code=user_order.ref_code)
+            user_order.items.add(order_item)
+            user_order.save()
+        order_item.cost = order_item.qty * order_item.product.cost
+        order_item.save()
+        return render(request, 'marketplace/cart.html', {'order':user_order})
     else:
-        order_item, status = OrderItem.objects.get_or_create(product=prod, ref_code=user_order.ref_code)
-        user_order.items.add(order_item)
-        user_order.save()
-    return render(request, 'marketplace/cart.html', {'order':user_order})
+        prod = product.objects.get(id=id)
+        user_order, status = Order.objects.get_or_create(user=request.user, is_ordered=False)
+        order_item = OrderItem.objects.get(product=prod, ref_code=user_order.ref_code)
+        order_item.cost = order_item.qty * order_item.product.cost
+        order_item.save()
+        return render(request, 'marketplace/cart.html', {'order':user_order})
 
 def add_quantity(request, id):
-    item = OrderItem.objects.get(id=id)
-    item.qty = item.qty + 1
+    item = OrderItem.objects.get(pk=id)
+    if item.qty < item.product.quantity:
+        item.qty = item.qty + 1
+        item.save()
+    return redirect('/marketplace/add_to_cart/'+str(item.product.id))
+
+def remove_quantity(request, id):
+    item = OrderItem.objects.get(pk=id)
+    item.qty = item.qty - 1
+    item.save()
+    return redirect('/marketplace/add_to_cart/'+str(item.product.id))
+
+def delete(request, id):
+    item = OrderItem.objects.get(pk=id)
+    item.delete()
     return redirect('/marketplace/add_to_cart/'+str(item.product.id))

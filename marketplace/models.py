@@ -9,7 +9,7 @@ class product(models.Model):
     overview = models.TextField()
     date = models.DateTimeField(auto_now_add = True)
     image = models.ImageField(upload_to="media", blank=True)
-    quantity = models.IntegerField(null=True)
+    quantity = models.PositiveIntegerField(null=True)
     cost = models.FloatField(null=True)
 #    pic = models.ForeignKey(profile, on_delete=models.PROTECT,null = True, blank = True)
 
@@ -24,12 +24,15 @@ class OrderItem(models.Model):
     is_ordered = models.BooleanField(default=False)
     date_added = models.DateTimeField(auto_now_add=True)
     date_ordered = models.DateTimeField(null=True)
-    qty = models.IntegerField(null=True,default=1)
+    qty = models.PositiveIntegerField(null=True,default=1)
     ref_code = models.CharField(max_length=20)
+    cost = models.IntegerField(null=True,default=0)
 
     def __str__(self):
         return self.product.product_title
 
+    # def order_item_total(self):
+    #     return float(product.cost) * float(product.quantity)
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='o')

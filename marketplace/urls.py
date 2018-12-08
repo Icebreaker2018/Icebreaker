@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'del_product/(?P<id>\d+)/$', views.delete_product, name="delete_product"),
     url(r'add_to_cart/(?P<id>\d+)/$', views.add_to_cart, name="add_to_cart"),
     url(r'add_quantity/(?P<id>\d+)/$', views.add_quantity, name="add_quantity"),
+    url(r'remove_quantity/(?P<id>\d+)/$', views.remove_quantity, name="remove_quantity"),
+    url(r'del_quantity/(?P<id>\d+)/$', views.delete, name="del_quantity"),
 ]
