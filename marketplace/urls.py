@@ -15,4 +15,6 @@ urlpatterns = [
     url(r'add_quantity/(?P<id>\d+)/$', views.add_quantity, name="add_quantity"),
     url(r'remove_quantity/(?P<id>\d+)/$', views.remove_quantity, name="remove_quantity"),
     url(r'del_quantity/(?P<id>\d+)/$', views.delete, name="del_quantity"),
+    url(r'checkout/$', views.checkout, name="checkout"),
+    url(r'^update-transaction/(?P<token>[-\w]+)/$', views.update_transaction, name='update_records')
 ]

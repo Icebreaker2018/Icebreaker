@@ -54,7 +54,14 @@
             <td colspan="2">Total</td>
             <td>₹{{ order.get_cart_total }}</td>
           </tr>
+          <tr>
+            <td colspan="2"><a href="{% url 'marketplace:products_blog' %}">Continue Shopping</a></td>
+            <td>
+              {% if order.get_cart_item %}
+                <a href="{% url 'marketplace:checkout' %}">Proceed To Checkout</a>
+              {% endif %}
+            </td>
+          </tr>
         </tbody>
       </table>
-   <a href="{% url 'marketplace:products_blog' %}">Continue Shopping</a>
 {% endblock %}
