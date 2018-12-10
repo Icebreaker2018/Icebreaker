@@ -2,8 +2,10 @@
 
 {% block content %}
     <h1>New donation</h1>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
+    <form method="POST"  action="{% url 'startFundraiser:checkout' pk %}" class="post-form">{% csrf_token %}
+      amount: <input type="number" name="pay" >
         <button type="submit" class="save btn btn-default">Add</button>
     </form>
+
+
 {% endblock %}

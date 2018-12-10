@@ -93,7 +93,7 @@ class BackersForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title','description','description2','body','order','slug']
+        fields = ['title','description']
 
 class createcomment(forms.ModelForm):
     content = forms.CharField(label = "",widget = forms.Textarea(attrs={'class':'form-control','placeholder':'Text goes here','rows':'4','cols':'50'}))

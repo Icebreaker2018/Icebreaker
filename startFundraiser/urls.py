@@ -28,6 +28,11 @@ urlpatterns = [
     url(r'^index/$', views.index, name='index'),
     url(r'^posts/$', views.blog_post, name='blog_post'),
     url(r'^campaign/(?P<pk>\d+)/support/$', views.campaign_support, name='campaign_support'),
+    url(r'^campaign/(?P<pk>\d+)/pay/$', views.pay, name='pay'),
+    url(r'^checkout/(?P<pk>\d+)/$', views.checkout, name='checkout'),
+    #path('update-transaction/<int:pk>/', views.update_transaction_records,name='update_records'),
+    #url(r'^update-transaction/(?P<token>[-\w]+)/$', views.update_transaction_records,name='update_records'),
+    url(r'^update-transaction/(?P<pk>\d+)/$', views.update_transaction_records,name='update_records'),
     url(r'^like/$', views.like_camp, name='like_camp'),
 
 ]

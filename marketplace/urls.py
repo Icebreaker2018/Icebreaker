@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^add/$',views.add_product, name="add_product"),
     url(r'edit_product/(?P<id>\d+)/$', views.edit_product, name="edit_product"),
     url(r'del_product/(?P<id>\d+)/$', views.delete_product, name="delete_product"),
+    url(r'^test/$',views.test, name="test"), #basic template
 
 ]

@@ -17,9 +17,10 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from . import settings
+from . import views
 from django.conf.urls.static import static
 from startFundraiser import views as blog_views
-
+from marketplace import views as marketplace_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
@@ -33,6 +34,10 @@ urlpatterns = [
     url(r'add/post/', blog_views.add_post, name='add_post'),
     url(r'^edit/post/(?P<id>\d+)/$', blog_views.edit_post, name='edit_post'),
     url(r'del/post/(?P<id>\d+)/$', blog_views.del_post, name='del_post'),
+    url(r'api/products/',marketplace_views.productsListView.as_view()),
+    url(r'api/funds/',blog_views.fundsListView.as_view()),
+    url(r'^messenger/$',views.message, name="messenger"),
+
 ]
 
 if settings.DEBUG:

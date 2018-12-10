@@ -1,11 +1,15 @@
 {% extends "startFundraiser/base.html" %}
 
 {% block content %}
-<form class="" method="post">
+{% for post in posts %}
+
+<form class="" id="post_update" method="post">
     {% csrf_token %}
     {{ form.media }}
     {{ form }}
     <input type="submit" value="Save">
 </form>
+
+  {% endfor %}
 
 {% endblock %}
