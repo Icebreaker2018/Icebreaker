@@ -91,6 +91,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = 'e7b12c1362d40c4c1f1042df469aad7f'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'startFundraiser:home'
+#LOGIN_REDIRECT_URL = 'register:user_login'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

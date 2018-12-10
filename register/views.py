@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Profile
+from .models import Profile,Temp
 from .forms import UserLoginForm,UserRegistrationForm,UserEditForm,ProfileEditForm
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
@@ -24,6 +24,11 @@ from django.contrib.auth.models import User
 #from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from django.db.models import Q
+###password change
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 def account_activation_sent(request):
     print('-------------in account_activation_sent-------------')
@@ -45,10 +50,10 @@ def user_login(request):
                     return redirect("http://127.0.0.1:8000/startfundraiser/")
 
                 else:
-                    return HttpResponse('User is not active')
+                    return render(request, 'register/error.html')
 
             else:
-                return HttpResponse('User is not available')
+                return render(request, 'register/error.html')
 
     else:
         form = UserLoginForm()
@@ -83,6 +88,11 @@ def user_register(request):
             last_name = form.data['last_name']
             email = form.data['email']
             password1 = form.data['password1']
+            names = Temp.objects.values_list('temp_user',flat=True)
+            if username in names:
+                return HttpResponse('this is cannot be used for now ')
+            else:
+                Temp.objects.create(temp_user=username,otp=b)
             context1 = {
                 'username':username,
                 'first_name':first_name,
@@ -104,16 +114,24 @@ def user_register(request):
 
 def new_user_reg(request):
     if request.method == 'POST':
+        otp1=request.POST['typed_otp']
+        otp4=int(otp1)
         username = request.POST['username']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        new_user = User.objects.create(username=username,first_name=first_name,last_name=last_name,email=email)
-        new_user.set_password(request.POST['password1'])
-        new_user.save()
-        Profile.objects.create(user = new_user)
-        login(request,new_user)
+        otp2=Temp.objects.get(temp_user=username).otp
+        otp3=int(otp2)
+        if otp3 == otp4:
+            username = request.POST['username']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            password1 = request.POST['password1']
+            new_user = User.objects.create(username=username,first_name=first_name,last_name=last_name,email=email)
+            new_user.set_password(request.POST['password1'])
+            new_user.save()
+            Profile.objects.create(user = new_user)
+            login(request,new_user)
+        else:
+            return HttpResponse('Please go back check your otp')
     return redirect("http://127.0.0.1:8000/startfundraiser/")
 
 
@@ -149,3 +167,20 @@ def edit_profile(request):
     }
 
     return render(request, 'register/edit_profile.html', contexts)
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('register:edit_profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'register/chnage_password.html', {
+        'form': form
+    })

@@ -10,12 +10,12 @@ class UserLoginForm(forms.Form):
     password = forms.CharField(label='', widget=forms.PasswordInput(attrs = {'placeholder':'password'}))
 
 class UserRegistrationForm(UserCreationForm):
-    username = forms.CharField(max_length=30, required=False, help_text='Optional.',widget=forms.TextInput(attrs = {'placeholder':'UserName'}))
-    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.',widget=forms.TextInput(attrs = {'placeholder':'First Name'}))
-    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.',widget=forms.TextInput(attrs = {'placeholder':'Last Name'}))
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.',widget=forms.TextInput(attrs = {'placeholder':'Email'}))
-    password1 = forms.CharField(max_length=30, required=False, help_text='Optional.',widget=forms.PasswordInput(attrs = {'placeholder':'password'}))
-    password2 = forms.CharField(max_length=30, required=False, help_text='Optional.',widget=forms.PasswordInput(attrs = {'placeholder':'Confirm password'}))
+    username = forms.CharField(max_length=50, required='required',widget=forms.TextInput(attrs = {'placeholder':'UserName','size':50,'style': 'font-size:large'}))
+    first_name = forms.CharField(max_length=50, required='required' ,widget=forms.TextInput(attrs = {'placeholder':'First Name','size':50,'style': 'font-size:large'}))
+    last_name = forms.CharField(max_length=50, required='required' ,widget=forms.TextInput(attrs = {'placeholder':'Last Name','size':50,'style': 'font-size:large'}))
+    email = forms.EmailField(max_length=254,widget=forms.TextInput(attrs = {'placeholder':'Email','size':50,'style': 'font-size:large'}))
+    password1 = forms.CharField(max_length=50,required='required',widget=forms.PasswordInput(attrs = {'placeholder':'password','size':50,'style': 'font-size:large'}))
+    password2 = forms.CharField(max_length=50,required='required', widget=forms.PasswordInput(attrs = {'placeholder':'Confirm password','size':50,'style': 'font-size:large'}))
 
     class Meta:
         model = User
@@ -51,6 +51,11 @@ class UserEditForm(forms.ModelForm):
 
 
 class ProfileEditForm(forms.ModelForm):
+    #photo = forms.ImageField(upload_to='images/',null=True, blank=True)
+
+    #github_link = forms.URLField(max_length=200,null=True,widget=forms.TextInput(attrs = {'placeholder':'UserName','size':50}))
+    #facebook_link = forms.URLField(max_length=200,null=True,widget=forms.TextInput(attrs = {'placeholder':'UserName','size':50}))
+    #linkedIn_link = forms.URLField(max_length=200,null=True,widget=forms.TextInput(attrs = {'placeholder':'UserName','size':50}))
     class Meta:
         model = Profile
         exclude =('user',)

@@ -84,7 +84,12 @@
                         <li class="nav-item" id="links"><a href="{% url 'startFundraiser:blog_post' %}">notifications</a></li>
                         {% if user.is_authenticated %}
                         <li class="nav-item" id="links"><a href="{% url 'register:user_logout' %}">Logout</a></li>
-                        hii {{ request.user }}
+                            {% if request.user.profile.photo %}
+                              <img src="{{ request.user.profile.photo.url }}" alt="" class="navbar-img" width="30px" height="35px">
+                            {% else %}
+                              <img src="{% static 'startFundraiser/images/user.png' %}" alt="" class="navbar-img" width="30px" height="35px">
+                            {% endif %}
+                            <span> Hi {{ request.user|capfirst }} </span>
                         {% else %}
                         <li class="nav-item" id="links"><a href="{% url 'register:user_register' %}">SignUp</a></li>
                         <li class="nav-item" id="links"><a href="{% url 'register:user_login' %}">Login</a></li>
