@@ -136,6 +136,7 @@ class reply(models.Model):
 class Backers(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     backer = models.CharField(max_length=50)
+    email = models.EmailField(null = True)
     amount = models.FloatField(null=False, blank=False)
     token = models.CharField(max_length=120, null = True)
     date_backed = models.DateTimeField(default=timezone.now)

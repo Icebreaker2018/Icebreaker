@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from . import settings
+from . import views
 from django.conf.urls.static import static
 from startFundraiser import views as blog_views
 from marketplace import views as marketplace_views
@@ -35,6 +36,7 @@ urlpatterns = [
     url(r'del/post/(?P<id>\d+)/$', blog_views.del_post, name='del_post'),
     url(r'api/products/',marketplace_views.productsListView.as_view()),
     url(r'api/funds/',blog_views.fundsListView.as_view()),
+    url(r'^messenger/$',views.message, name="messenger"),
 
 ]
 

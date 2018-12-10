@@ -389,15 +389,12 @@ def pay(request, pk):
 def checkout(request, pk, **kwargs):
     campaign = get_object_or_404(Campaign, pk=pk)
     client_token = generate_client_token()
-    #existing_order = get_user_pending_order(request)
-    #amt = 0
     publishKey = settings.STRIPE_PUBLISHABLE_KEY
 
     if request.method == 'POST':
         if 'pay' in request.POST:
             global amt
             amt = request.POST['pay']
-            print(amt)
         else:
             token = request.POST.get('stripeToken', False)
             if token:
@@ -440,23 +437,46 @@ def checkout(request, pk, **kwargs):
                     '''
                     campaign = get_object_or_404(Campaign, pk=pk)
 
-                    # create a transaction
+                    # create a transaction record
                     transaction = Backers(backer=request.user,
                                             campaign = campaign,
                                             token=entry_token ,
                                             amount = amt,
                                             )
-                    # save the transcation (otherwise doesn't exist)
                     transaction.save()
                     campaign.pledged = float(campaign.pledged) + float(amt)
                     campaign.people_pledged = campaign.people_pledged + 1
                     campaign.save()
 
-                    # send an email to the customer
-                    # look at tutorial on how to send emails with sendgrid
+                    ## mail notification as funds receivd to the project #
+                    User = get_user_model()
+                    uname = request.user.username
+                    Funds =  amt
+                    project = campaign.campaign_Title
+                    Project_by = campaign.user
+                    mail_id = User.objects.get(username = Project_by).email
+
+                    subject = "Recived Funds"
+                    to = ['ruthala.shiva512@gmail.com',]
+                    to.append(mail_id)
+                    from_email = 'ruthala.shiva512@gmail.com'
+
+                    details = {
+                        'donar': uname,
+                        'amount': Funds,
+                        'reciver': Project_by,
+                        'project': project,
+                    }
+
+                    message = get_template('startFundraiser/mail.html').render(dict(details))
+                    msg = EmailMessage(subject, message, to=to, from_email=from_email)
+                    msg.content_subtype = 'html'
+                    msg.send()
+
                     messages.info(request, "Thank you! Your purchase was successful!")
                     #return HttpResponse("updated")
                     #testing
+                    #return render(request, 'acknowledgement.html', details)
                     return HttpResponse(f"{entry_token}<br>{pk}<br>{amt}<br>")
 
                     #return redirect(reverse('startFundraiser:update_records',pk))
@@ -483,6 +503,7 @@ def update_transaction_records(request,pk):
     # create a transaction
     transaction = Backers(backer=request.user,
                             campaign = campaign,
+                            email = request.user.email,
                             token=entry_token ,
                             amount = amt,
                             )
