@@ -166,16 +166,3 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': 'codesnippet',
     }
 }
-
-if DEBUG:
-    # test keys
-    STRIPE_PUBLISHABLE_KEY = 'pk_test_uv520wrOAmj5S0R6pSMqfQuO'
-    STRIPE_SECRET_KEY = 'sk_test_9RtMPnED0F2g7hQJ3eOpvRBe'
-    BT_ENVIRONMENT='sandbox'
-    BT_MERCHANT_ID='rx5td5k3vgwp9bbt'
-    BT_PUBLIC_KEY='djj8jkw9fhs92bgk'
-    BT_PRIVATE_KEY='a910474671c890bb40ed9c848adaa1c5'
-else:
-    # live keys
-    STRIPE_PUBLISHABLE_KEY = 'pk_test_uv520wrOAmj5S0R6pSMqfQuO'
-    STRIPE_SECRET_KEY = 'sk_test_9RtMPnED0F2g7hQJ3eOpvRBe'
