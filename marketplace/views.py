@@ -4,10 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from .models import Transcation #
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from marketplace.serializer import products_boughtSerializer #
+#from marketplace.serializer import products_boughtSerializer #
 from rest_framework.views import APIView
 from .models import product, Order, OrderItem ,Transaction
 from . import forms
@@ -81,7 +80,8 @@ def delete_product(request, id):
     instance= get_object_or_404(product, pk= id)
     instance.delete()
     return redirect('marketplace:products_blog')
-
+# django API
+'''
 class productsListView(APIView):
     def get(self,request):
         product_delivered = Transcation.objects.all()
@@ -94,7 +94,7 @@ class productsListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
-
+'''
 def add_to_cart(request, id):
     if request.method == "POST":
         prod = product.objects.get(id=id)
