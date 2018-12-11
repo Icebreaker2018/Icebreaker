@@ -88,8 +88,8 @@ SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
 SOCIAL_AUTH_FACEBOOK_KEY = '285495742076753'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'e7b12c1362d40c4c1f1042df469aad7f'
 
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
+#LOGIN_URL = 'login'
+#LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'startFundraiser:home'
 #LOGIN_REDIRECT_URL = 'register:user_login'
 
@@ -171,10 +171,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"),
-# ]
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+     os.path.join(BASE_DIR, "static"),
+]
+STATIC_ROOT= os.path.join(os.path.dirname(BASE_DIR), "static_cdn", "static_root")
 MEDIA_URL ='/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -199,6 +200,7 @@ else:
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'register.authentication.EmailAuthBackend',
 )
 
 

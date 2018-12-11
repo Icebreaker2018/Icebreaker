@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Profile,Temp
 from .forms import UserLoginForm,UserRegistrationForm,UserEditForm,ProfileEditForm
-from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+#from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate, login as enter, logout
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, Http404
 from django.urls import reverse
 
@@ -45,7 +45,7 @@ def user_login(request):
 
             if user:
                 if user.is_active:
-                    login(request, user)
+                    enter(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     #return redirect('project:post_list')
                     return redirect("http://127.0.0.1:8000/startfundraiser/")
 
@@ -129,7 +129,7 @@ def new_user_reg(request):
             new_user.set_password(request.POST['password1'])
             new_user.save()
             Profile.objects.create(user = new_user)
-            login(request,new_user)
+            enter(request,new_user,backend='django.contrib.auth.backends.ModelBackend')
         else:
             return HttpResponse('Please go back check your otp')
     return redirect("http://127.0.0.1:8000/startfundraiser/")
